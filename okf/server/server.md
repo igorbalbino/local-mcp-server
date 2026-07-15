@@ -43,7 +43,7 @@ Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromG
 
 | Path / method | Auth | Comportamento |
 |---------------|------|---------------|
-| `GET /health` | Não | Healthcheck Docker |
+| `GET /health` | Não | `{"name":"Local MCP Server","version":"..."}` a partir de `VERSION` |
 | `OPTIONS *` | Não | CORS |
 | Demais (MCP) | Sim | Streamable HTTP (`initialize`, `tools/list`, `tools/call`, …) |
 

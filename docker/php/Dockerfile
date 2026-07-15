@@ -17,6 +17,11 @@ RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 FROM php:8.4-cli-alpine AS runtime
 
+LABEL org.opencontainers.image.title="Local MCP Server"
+LABEL org.opencontainers.image.description="Generic MCP Server for AI Agents"
+LABEL org.opencontainers.image.source="https://github.com/igorbalbino/local-mcp-server"
+LABEL org.opencontainers.image.licenses="MIT"
+
 RUN apk add --no-cache wget
 
 WORKDIR /app

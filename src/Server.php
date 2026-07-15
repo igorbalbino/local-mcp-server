@@ -10,6 +10,7 @@ use Jarvis\McpServer\Core\Config;
 use Jarvis\McpServer\Core\Container;
 use Jarvis\McpServer\Core\ServiceProvider;
 use Jarvis\McpServer\Core\ToolRegistry;
+use Jarvis\McpServer\Core\Version;
 use Jarvis\McpServer\Exceptions\IntegrationException;
 use Mcp\Schema\Request\CallToolRequest;
 use Mcp\Server as McpServer;
@@ -80,12 +81,9 @@ final class Server
     private function healthResponse(): ResponseInterface
     {
         $psr17 = new Psr17Factory();
-        $registry = $this->container->get(ToolRegistry::class);
-        $config = $this->container->get(Config::class);
         $body = json_encode([
-            'status' => 'ok',
-            'server' => $config->string('MCP_SERVER_NAME', 'jarvis-mcp-server'),
-            'tools' => $registry->count(),
+            'name' => Version::NAME,
+            'version' => Version::read($this->basePath),
         ], JSON_THROW_ON_ERROR);
 
         $response = $psr17->createResponse(200);
@@ -130,11 +128,13 @@ final class Server
             mkdir($sessionDir, 0775, true);
         }
 
+        $version = Version::read($this->basePath);
+
         $builder = McpServer::builder()
             ->setServerInfo(
-                $config->string('MCP_SERVER_NAME', 'jarvis-mcp-server'),
-                $config->string('MCP_SERVER_VERSION', '1.0.0'),
-                'Jarvis MCP Server — modular tools for AI agents',
+                $config->string('MCP_SERVER_NAME', Version::NAME),
+                $config->string('MCP_SERVER_VERSION', $version),
+                'Local MCP Server — modular tools for AI agents',
             )
             ->setSession(new FileSessionStore($sessionDir))
             ->setLogger($logger)
