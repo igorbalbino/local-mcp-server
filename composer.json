@@ -1,6 +1,6 @@
 {
-    "name": "jarvis/mcp-server",
-    "description": "Jarvis MCP Server - Model Context Protocol server for AI agents",
+    "name": "igorbalbino/local-mcp",
+    "description": "Local MCP Server - Model Context Protocol server for AI agents",
     "type": "project",
     "license": "MIT",
     "authors": [
@@ -28,12 +28,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Jarvis\\McpServer\\": "src/"
+            "LocalMcp\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Jarvis\\McpServer\\Tests\\": "tests/"
+            "LocalMcp\\Tests\\": "tests/"
         }
     },
     "scripts": {

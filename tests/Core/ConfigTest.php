@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tests\Core;
+namespace LocalMcp\Tests\Core;
 
-use Jarvis\McpServer\Core\Config;
+use LocalMcp\Core\Config;
 use PHPUnit\Framework\TestCase;
 
 final class ConfigTest extends TestCase
@@ -13,13 +13,13 @@ final class ConfigTest extends TestCase
     {
         $config = new Config([
             'ENABLE_SEARXNG' => 'true',
-            'JARVIS_API_KEYS' => 'a, b, ,c',
+            'LOCAL_MCP_API_KEYS' => 'a, b, ,c',
             'EMPTY' => '',
         ]);
 
         self::assertTrue($config->bool('ENABLE_SEARXNG'));
         self::assertFalse($config->bool('MISSING'));
-        self::assertSame(['a', 'b', 'c'], $config->list('JARVIS_API_KEYS'));
+        self::assertSame(['a', 'b', 'c'], $config->list('LOCAL_MCP_API_KEYS'));
         self::assertNull($config->get('EMPTY'));
         self::assertSame('fallback', $config->string('MISSING', 'fallback'));
     }

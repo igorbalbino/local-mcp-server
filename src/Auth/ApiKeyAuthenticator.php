@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Auth;
+namespace LocalMcp\Auth;
 
-use Jarvis\McpServer\Contracts\AuthenticatorInterface;
-use Jarvis\McpServer\Core\Config;
+use LocalMcp\Contracts\AuthenticatorInterface;
+use LocalMcp\Core\Config;
 
 final class ApiKeyAuthenticator implements AuthenticatorInterface
 {
@@ -14,7 +14,7 @@ final class ApiKeyAuthenticator implements AuthenticatorInterface
 
     public function __construct(Config $config)
     {
-        $this->apiKeys = $config->list('JARVIS_API_KEYS');
+        $this->apiKeys = $config->list('LOCAL_MCP_API_KEYS');
     }
 
     /**
@@ -22,7 +22,7 @@ final class ApiKeyAuthenticator implements AuthenticatorInterface
      */
     public static function fromKeys(array $apiKeys): self
     {
-        $config = new Config(['JARVIS_API_KEYS' => implode(',', $apiKeys)]);
+        $config = new Config(['LOCAL_MCP_API_KEYS' => implode(',', $apiKeys)]);
 
         return new self($config);
     }

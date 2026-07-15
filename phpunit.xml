@@ -5,7 +5,7 @@
          colors="true"
          cacheDirectory=".phpunit.cache">
     <testsuites>
-        <testsuite name="Jarvis MCP Server">
+        <testsuite name="Local MCP Server">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

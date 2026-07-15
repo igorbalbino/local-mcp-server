@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     image: local-mcp:dev
-    container_name: local-mcp-dev
+    container_name: local-mcp
     restart: unless-stopped
     ports:
       - "${APP_PORT:-8090}:8080"
@@ -14,8 +14,8 @@ services:
       - .:/app
       - /app/vendor
     networks:
-      - jarvis
+      - local-mcp
 
 networks:
-  jarvis:
-    name: jarvis
+  local-mcp:
+    name: local-mcp

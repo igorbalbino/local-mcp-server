@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Auth;
+namespace LocalMcp\Auth;
 
-use Jarvis\McpServer\Contracts\AuthenticatorInterface;
+use LocalMcp\Contracts\AuthenticatorInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

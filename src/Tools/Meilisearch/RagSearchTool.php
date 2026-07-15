@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tools\Meilisearch;
+namespace LocalMcp\Tools\Meilisearch;
 
-use Jarvis\McpServer\Clients\MeilisearchClient;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Tools\AbstractTool;
+use LocalMcp\Clients\MeilisearchClient;
+use LocalMcp\Core\Config;
+use LocalMcp\Tools\AbstractTool;
 
 final class RagSearchTool extends AbstractTool
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tools\HomeAssistant;
+namespace LocalMcp\Tools\HomeAssistant;
 
-use Jarvis\McpServer\Clients\HomeAssistantClient;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Tools\AbstractTool;
+use LocalMcp\Clients\HomeAssistantClient;
+use LocalMcp\Core\Config;
+use LocalMcp\Tools\AbstractTool;
 
 final class HaListStatesTool extends AbstractTool
 {

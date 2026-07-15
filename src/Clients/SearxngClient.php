@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Clients;
+namespace LocalMcp\Clients;
 
-use Jarvis\McpServer\Core\Config;
+use LocalMcp\Core\Config;
 
 final class SearxngClient extends AbstractHttpClient
 {

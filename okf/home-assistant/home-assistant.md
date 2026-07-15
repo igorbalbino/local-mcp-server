@@ -11,7 +11,7 @@ Integração com a REST API do Home Assistant: listar estados, consultar entidad
 | [clients](../clients/clients.md) | `HomeAssistantClient` |
 | [tools](../tools/tools.md) | Três tools HA |
 | [config](../config/config.md) | `ENABLE_HOME_ASSISTANT`, `HA_URL`, `HA_TOKEN` |
-| [auth](../auth/auth.md) | Auth Jarvis (independente do token HA) |
+| [auth](../auth/auth.md) | Auth Local MCP (independente do token HA) |
 
 ## Variáveis de ambiente
 

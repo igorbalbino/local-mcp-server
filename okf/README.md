@@ -1,4 +1,4 @@
-# OKF — Jarvis MCP Server
+# OKF — Local MCP Server
 
 Pasta de conhecimento do projeto (**OKF**): cada assunto tem sua própria pasta com um `.md` descrevendo contexto, relações e o mapeamento para arquivos, classes e funções.
 

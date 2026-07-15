@@ -11,7 +11,7 @@ Busca web privativa via instância SearXNG (`format=json`). Resultado sanitizado
 | [clients](../clients/clients.md) | `SearxngClient` |
 | [tools](../tools/tools.md) | `WebSearchTool` |
 | [config](../config/config.md) | `ENABLE_SEARXNG`, `SEARXNG_URL`, `SEARXNG_API_KEY` |
-| [auth](../auth/auth.md) | Auth Jarvis separada |
+| [auth](../auth/auth.md) | Auth Local MCP separada |
 
 ## Variáveis de ambiente
 

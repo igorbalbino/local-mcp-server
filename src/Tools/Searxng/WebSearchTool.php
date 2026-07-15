@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tools\Searxng;
+namespace LocalMcp\Tools\Searxng;
 
-use Jarvis\McpServer\Clients\SearxngClient;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Tools\AbstractTool;
+use LocalMcp\Clients\SearxngClient;
+use LocalMcp\Core\Config;
+use LocalMcp\Tools\AbstractTool;
 
 final class WebSearchTool extends AbstractTool
 {

@@ -2,7 +2,7 @@
 
 ## Contexto
 
-`Jarvis\McpServer\Server` é a facade: carrega o DI, roteia `/health`, valida auth e executa o protocolo MCP via `mcp/sdk` (`StreamableHttpTransport` + `FileSessionStore`).
+`LocalMcp\Server` é a facade: carrega o DI, roteia `/health`, valida auth e executa o protocolo MCP via `mcp/sdk` (`StreamableHttpTransport` + `FileSessionStore`).
 
 Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromGlobals` → headers + body).
 

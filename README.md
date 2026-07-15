@@ -25,15 +25,15 @@ services:
     env_file:
       - .env
     networks:
-      - jarvis
+      - local-mcp
 
 networks:
-  jarvis:
+  local-mcp:
 ```
 
 ```bash
 cp .env.example .env
-# set JARVIS_API_KEYS and enable the tools you need
+# set LOCAL_MCP_API_KEYS and enable the tools you need
 docker compose up -d
 ```
 
@@ -56,7 +56,7 @@ curl http://localhost:8090/health
 # {"name":"Local MCP Server","version":"0.1.0"}
 ```
 
-MCP endpoint: `http://localhost:8090/` with header `Authorization: Bearer <JARVIS_API_KEYS>`.
+MCP endpoint: `http://localhost:8090/` with header `Authorization: Bearer <LOCAL_MCP_API_KEYS>`.
 
 ### Cursor / MCP client
 
@@ -89,7 +89,7 @@ The file [`VERSION`](VERSION) holds the semver (currently `0.1.0`). `/health` an
 
 | Variable | Description |
 |----------|-------------|
-| `JARVIS_API_KEYS` | Comma-separated API keys for client auth |
+| `LOCAL_MCP_API_KEYS` | Comma-separated API keys for client auth |
 | `MCP_SERVER_NAME` / `MCP_SERVER_VERSION` | Optional overrides (defaults: name + `VERSION` file) |
 | `LOG_LEVEL` | Monolog level (`info`, `debug`, …) |
 | `ENABLE_HOME_ASSISTANT` + `HA_URL` + `HA_TOKEN` | Home Assistant |

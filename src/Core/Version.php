@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Core;
+namespace LocalMcp\Core;
 
 final class Version
 {

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer;
+namespace LocalMcp;
 
-use Jarvis\McpServer\Contracts\AuthenticatorInterface;
-use Jarvis\McpServer\Contracts\ToolInterface;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Core\Container;
-use Jarvis\McpServer\Core\ServiceProvider;
-use Jarvis\McpServer\Core\ToolRegistry;
-use Jarvis\McpServer\Core\Version;
-use Jarvis\McpServer\Exceptions\IntegrationException;
+use LocalMcp\Contracts\AuthenticatorInterface;
+use LocalMcp\Contracts\ToolInterface;
+use LocalMcp\Core\Config;
+use LocalMcp\Core\Container;
+use LocalMcp\Core\ServiceProvider;
+use LocalMcp\Core\ToolRegistry;
+use LocalMcp\Core\Version;
+use LocalMcp\Exceptions\IntegrationException;
 use Mcp\Schema\Request\CallToolRequest;
 use Mcp\Server as McpServer;
 use Mcp\Server\RequestContext;

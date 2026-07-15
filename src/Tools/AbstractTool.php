@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tools;
+namespace LocalMcp\Tools;
 
-use Jarvis\McpServer\Contracts\ServiceClientInterface;
-use Jarvis\McpServer\Contracts\ToolInterface;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Exceptions\IntegrationException;
+use LocalMcp\Contracts\ServiceClientInterface;
+use LocalMcp\Contracts\ToolInterface;
+use LocalMcp\Core\Config;
+use LocalMcp\Exceptions\IntegrationException;
 
 abstract class AbstractTool implements ToolInterface
 {

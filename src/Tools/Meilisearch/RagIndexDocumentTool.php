@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tools\Meilisearch;
+namespace LocalMcp\Tools\Meilisearch;
 
-use Jarvis\McpServer\Clients\MeilisearchClient;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Exceptions\IntegrationException;
-use Jarvis\McpServer\Tools\AbstractTool;
+use LocalMcp\Clients\MeilisearchClient;
+use LocalMcp\Core\Config;
+use LocalMcp\Exceptions\IntegrationException;
+use LocalMcp\Tools\AbstractTool;
 
 final class RagIndexDocumentTool extends AbstractTool
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Core;
+namespace LocalMcp\Core;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
@@ -20,7 +20,7 @@ final class LoggerFactory
             mkdir($logDir, 0775, true);
         }
 
-        $logger = new Logger('jarvis');
+        $logger = new Logger('local-mcp');
         $logger->pushHandler(new StreamHandler($logDir . '/app.log', $level));
         $logger->pushHandler(new StreamHandler('php://stderr', $level));
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tests\Core;
+namespace LocalMcp\Tests\Core;
 
-use Jarvis\McpServer\Contracts\ToolInterface;
-use Jarvis\McpServer\Core\ToolRegistry;
+use LocalMcp\Contracts\ToolInterface;
+use LocalMcp\Core\ToolRegistry;
 use PHPUnit\Framework\TestCase;
 
 final class ToolRegistryTest extends TestCase

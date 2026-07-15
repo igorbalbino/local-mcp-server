@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tools\LibreTranslate;
+namespace LocalMcp\Tools\LibreTranslate;
 
-use Jarvis\McpServer\Clients\LibreTranslateClient;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Tools\AbstractTool;
+use LocalMcp\Clients\LibreTranslateClient;
+use LocalMcp\Core\Config;
+use LocalMcp\Tools\AbstractTool;
 
 final class TranslateTool extends AbstractTool
 {

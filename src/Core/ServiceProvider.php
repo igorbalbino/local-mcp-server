@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Core;
+namespace LocalMcp\Core;
 
-use Jarvis\McpServer\Auth\ApiKeyAuthenticator;
-use Jarvis\McpServer\Clients\BrowserlessClient;
-use Jarvis\McpServer\Clients\HomeAssistantClient;
-use Jarvis\McpServer\Clients\LibreTranslateClient;
-use Jarvis\McpServer\Clients\MeilisearchClient;
-use Jarvis\McpServer\Clients\SearxngClient;
-use Jarvis\McpServer\Contracts\AuthenticatorInterface;
-use Jarvis\McpServer\Contracts\ToolInterface;
-use Jarvis\McpServer\Tools\Browserless\BrowserContentTool;
-use Jarvis\McpServer\Tools\Browserless\BrowserPdfTool;
-use Jarvis\McpServer\Tools\Browserless\BrowserScreenshotTool;
-use Jarvis\McpServer\Tools\HomeAssistant\HaCallServiceTool;
-use Jarvis\McpServer\Tools\HomeAssistant\HaGetStateTool;
-use Jarvis\McpServer\Tools\HomeAssistant\HaListStatesTool;
-use Jarvis\McpServer\Tools\LibreTranslate\TranslateTool;
-use Jarvis\McpServer\Tools\Meilisearch\RagIndexDocumentTool;
-use Jarvis\McpServer\Tools\Meilisearch\RagSearchTool;
-use Jarvis\McpServer\Tools\Searxng\WebSearchTool;
+use LocalMcp\Auth\ApiKeyAuthenticator;
+use LocalMcp\Clients\BrowserlessClient;
+use LocalMcp\Clients\HomeAssistantClient;
+use LocalMcp\Clients\LibreTranslateClient;
+use LocalMcp\Clients\MeilisearchClient;
+use LocalMcp\Clients\SearxngClient;
+use LocalMcp\Contracts\AuthenticatorInterface;
+use LocalMcp\Contracts\ToolInterface;
+use LocalMcp\Tools\Browserless\BrowserContentTool;
+use LocalMcp\Tools\Browserless\BrowserPdfTool;
+use LocalMcp\Tools\Browserless\BrowserScreenshotTool;
+use LocalMcp\Tools\HomeAssistant\HaCallServiceTool;
+use LocalMcp\Tools\HomeAssistant\HaGetStateTool;
+use LocalMcp\Tools\HomeAssistant\HaListStatesTool;
+use LocalMcp\Tools\LibreTranslate\TranslateTool;
+use LocalMcp\Tools\Meilisearch\RagIndexDocumentTool;
+use LocalMcp\Tools\Meilisearch\RagSearchTool;
+use LocalMcp\Tools\Searxng\WebSearchTool;
 use Psr\Log\LoggerInterface;
 
 final class ServiceProvider

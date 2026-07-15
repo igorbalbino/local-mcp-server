@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tests\Core;
+namespace LocalMcp\Tests\Core;
 
-use Jarvis\McpServer\Core\Version;
+use LocalMcp\Core\Version;
 use PHPUnit\Framework\TestCase;
 
 final class VersionTest extends TestCase

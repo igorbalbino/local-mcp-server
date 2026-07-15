@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-use Jarvis\McpServer\Tools\Browserless\BrowserContentTool;
-use Jarvis\McpServer\Tools\Browserless\BrowserPdfTool;
-use Jarvis\McpServer\Tools\Browserless\BrowserScreenshotTool;
-use Jarvis\McpServer\Tools\HomeAssistant\HaCallServiceTool;
-use Jarvis\McpServer\Tools\HomeAssistant\HaGetStateTool;
-use Jarvis\McpServer\Tools\HomeAssistant\HaListStatesTool;
-use Jarvis\McpServer\Tools\LibreTranslate\TranslateTool;
-use Jarvis\McpServer\Tools\Meilisearch\RagIndexDocumentTool;
-use Jarvis\McpServer\Tools\Meilisearch\RagSearchTool;
-use Jarvis\McpServer\Tools\Searxng\WebSearchTool;
+use LocalMcp\Tools\Browserless\BrowserContentTool;
+use LocalMcp\Tools\Browserless\BrowserPdfTool;
+use LocalMcp\Tools\Browserless\BrowserScreenshotTool;
+use LocalMcp\Tools\HomeAssistant\HaCallServiceTool;
+use LocalMcp\Tools\HomeAssistant\HaGetStateTool;
+use LocalMcp\Tools\HomeAssistant\HaListStatesTool;
+use LocalMcp\Tools\LibreTranslate\TranslateTool;
+use LocalMcp\Tools\Meilisearch\RagIndexDocumentTool;
+use LocalMcp\Tools\Meilisearch\RagSearchTool;
+use LocalMcp\Tools\Searxng\WebSearchTool;
 
 /**
  * Tool class map. Each class is resolved from the container and registered
  * only when ToolInterface::isEnabled() returns true.
  *
- * @return list<class-string<\Jarvis\McpServer\Contracts\ToolInterface>>
+ * @return list<class-string<\LocalMcp\Contracts\ToolInterface>>
  */
 return [
     HaListStatesTool::class,

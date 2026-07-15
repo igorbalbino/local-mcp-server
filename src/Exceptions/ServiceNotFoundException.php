@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Exceptions;
+namespace LocalMcp\Exceptions;
 
 use Exception;
 use Psr\Container\NotFoundExceptionInterface;

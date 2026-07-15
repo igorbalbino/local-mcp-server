@@ -1,13 +1,13 @@
-# Overview — Arquitetura Jarvis MCP Server
+# Overview — Arquitetura Local MCP Server
 
 ## Contexto
 
-O **Jarvis MCP Server** é um servidor [Model Context Protocol](https://modelcontextprotocol.io) genérico, independente do modelo de IA (Cursor, OpenAI, Gemini, Ollama, etc.). Ele expõe **tools** HTTP-authenticated para agentes, encapsulando integrações externas sem vazar secrets ao LLM.
+O **Local MCP Server** é um servidor [Model Context Protocol](https://modelcontextprotocol.io) genérico, independente do modelo de IA (Cursor, OpenAI, Gemini, Ollama, etc.). Ele expõe **tools** HTTP-authenticated para agentes, encapsulando integrações externas sem vazar secrets ao LLM.
 
 Decisões centrais:
 
 - SDK oficial `mcp/sdk` com transport **Streamable HTTP**
-- Auth cliente→Jarvis por **API Key** (`Authorization: Bearer`)
+- Auth cliente→Local MCP por **API Key** (`Authorization: Bearer`)
 - PHP 8.4+, Composer, Guzzle, sem framework pesado
 - Módulos de tool independente (SOLID)
 
@@ -46,7 +46,7 @@ AI Agent
    ▼
 public/index.php
    ▼
-Jarvis\McpServer\Server
+LocalMcp\Server
    ├─ /health          (sem auth)
    ├─ OPTIONS          (CORS)
    ├─ Auth             → ApiKeyAuthenticator

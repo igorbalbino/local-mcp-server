@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Core;
+namespace LocalMcp\Core;
 
-use Jarvis\McpServer\Exceptions\ServiceNotFoundException;
+use LocalMcp\Exceptions\ServiceNotFoundException;
 use Psr\Container\ContainerInterface;
 
 final class Container implements ContainerInterface

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Clients;
+namespace LocalMcp\Clients;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Jarvis\McpServer\Contracts\ServiceClientInterface;
-use Jarvis\McpServer\Exceptions\IntegrationException;
+use LocalMcp\Contracts\ServiceClientInterface;
+use LocalMcp\Exceptions\IntegrationException;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractHttpClient implements ServiceClientInterface

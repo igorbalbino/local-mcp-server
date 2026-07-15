@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tests\Auth;
+namespace LocalMcp\Tests\Auth;
 
-use Jarvis\McpServer\Auth\ApiKeyAuthenticator;
+use LocalMcp\Auth\ApiKeyAuthenticator;
 use PHPUnit\Framework\TestCase;
 
 final class ApiKeyAuthenticatorTest extends TestCase

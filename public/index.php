@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Jarvis\McpServer\Server;
+use LocalMcp\Server;
 use Dotenv\Dotenv;
 
 require dirname(__DIR__) . '/vendor/autoload.php';

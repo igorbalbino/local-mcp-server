@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Contracts;
+namespace LocalMcp\Contracts;
 
 interface ServiceClientInterface
 {

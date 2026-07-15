@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tests\Clients;
+namespace LocalMcp\Tests\Clients;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use Jarvis\McpServer\Clients\HomeAssistantClient;
-use Jarvis\McpServer\Clients\SearxngClient;
-use Jarvis\McpServer\Core\Config;
+use LocalMcp\Clients\HomeAssistantClient;
+use LocalMcp\Clients\SearxngClient;
+use LocalMcp\Core\Config;
 use PHPUnit\Framework\TestCase;
 
 final class ClientsTest extends TestCase

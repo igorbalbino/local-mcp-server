@@ -2,14 +2,14 @@
 
 ## Contexto
 
-Toda configuração operacional passa por variáveis de ambiente (arquivo `.env` em runtime; `.env.example` como template). `vlucas/phpdotenv` carrega no `public/index.php`. A API tipada é `Jarvis\McpServer\Core\Config`.
+Toda configuração operacional passa por variáveis de ambiente (arquivo `.env` em runtime; `.env.example` como template). `vlucas/phpdotenv` carrega no `public/index.php`. A API tipada é `LocalMcp\Core\Config`.
 
 ## Relacionamentos
 
 | Assunto | Relação |
 |---------|---------|
 | [core](../core/core.md) | Classe `Config` |
-| [auth](../auth/auth.md) | `JARVIS_API_KEYS` |
+| [auth](../auth/auth.md) | `LOCAL_MCP_API_KEYS` |
 | [tools](../tools/tools.md) / integrações | `ENABLE_*` + URLs/tokens |
 | [docker](../docker/docker.md) | `env_file: .env` no compose |
 | [server](../server/server.md) | `MCP_SERVER_NAME`, `MCP_SERVER_VERSION`, `LOG_LEVEL` |
@@ -32,7 +32,7 @@ Toda configuração operacional passa por variáveis de ambiente (arquivo `.env`
 | `LOG_LEVEL` | `info`, `debug`, … |
 | `MCP_SERVER_NAME` | Identidade MCP |
 | `MCP_SERVER_VERSION` | Semver |
-| `JARVIS_API_KEYS` | Obrigatória para usar tools |
+| `LOCAL_MCP_API_KEYS` | Obrigatória para usar tools |
 
 ## Feature flags por integração
 

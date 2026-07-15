@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Jarvis\McpServer\Tools\Browserless;
+namespace LocalMcp\Tools\Browserless;
 
-use Jarvis\McpServer\Clients\BrowserlessClient;
-use Jarvis\McpServer\Core\Config;
-use Jarvis\McpServer\Tools\AbstractTool;
+use LocalMcp\Clients\BrowserlessClient;
+use LocalMcp\Core\Config;
+use LocalMcp\Tools\AbstractTool;
 
 final class BrowserScreenshotTool extends AbstractTool
 {
