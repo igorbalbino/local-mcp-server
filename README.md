@@ -106,6 +106,7 @@ src/
   Server.php     Facade (health + MCP)
 public/index.php
 config/tools.php
+okf/             Knowledge docs by feature (see okf/README.md)
 ```
 
 ## Tests
