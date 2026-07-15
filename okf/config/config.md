@@ -9,7 +9,7 @@ Toda configuração operacional passa por variáveis de ambiente (arquivo `.env`
 | Assunto | Relação |
 |---------|---------|
 | [core](../core/core.md) | Classe `Config` |
-| [auth](../auth/auth.md) | `LOCAL_MCP_API_KEYS` |
+| [auth](../auth/auth.md) | `LOCAL_MCP_API_KEYS`, `LOCAL_MCP_AUTH_MODE` |
 | [tools](../tools/tools.md) / integrações | `ENABLE_*` + URLs/tokens |
 | [docker](../docker/docker.md) | `env_file: .env` no compose |
 | [server](../server/server.md) | `MCP_SERVER_NAME`, `MCP_SERVER_VERSION`, `LOG_LEVEL` |
@@ -32,7 +32,8 @@ Toda configuração operacional passa por variáveis de ambiente (arquivo `.env`
 | `LOG_LEVEL` | `info`, `debug`, … |
 | `MCP_SERVER_NAME` | Identidade MCP |
 | `MCP_SERVER_VERSION` | Semver |
-| `LOCAL_MCP_API_KEYS` | Obrigatória para usar tools |
+| `LOCAL_MCP_API_KEYS` | Keys do cliente MCP (URL-safe) |
+| `LOCAL_MCP_AUTH_MODE` | `auto` / `none` / `bearer` |
 
 ## Feature flags por integração
 

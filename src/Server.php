@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LocalMcp;
 
+use LocalMcp\Auth\RequestAuthenticator;
 use LocalMcp\Contracts\AuthenticatorInterface;
 use LocalMcp\Contracts\ToolInterface;
 use LocalMcp\Core\Config;
@@ -45,9 +46,10 @@ final class Server
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $path = rtrim($request->getUri()->getPath(), '/') ?: '/';
+        $path = $request->getUri()->getPath();
+        $normalized = rtrim($path, '/') ?: '/';
 
-        if ($path === '/health') {
+        if ($normalized === '/health') {
             return $this->healthResponse();
         }
 
@@ -55,7 +57,13 @@ final class Server
             return $this->optionsResponse();
         }
 
-        if (!$this->isAuthenticated($request)) {
+        $route = $this->resolveMcpRoute($normalized);
+        if ($route === null) {
+            return $this->notFoundResponse();
+        }
+
+        $authenticator = $this->requestAuthenticator();
+        if (!$authenticator->authorize($request, $route['token'])) {
             return $this->unauthorizedResponse();
         }
 
@@ -70,12 +78,33 @@ final class Server
         return $this->handle($creator->fromGlobals());
     }
 
-    private function isAuthenticated(ServerRequestInterface $request): bool
+    /**
+     * Canonical MCP paths:
+     * - /mcp
+     * - /mcp/{api-key}   (Home Assistant / clients without custom headers)
+     * - /                 (alias of /mcp)
+     *
+     * @return array{token: ?string}|null
+     */
+    private function resolveMcpRoute(string $normalized): ?array
     {
-        $header = $request->getHeaderLine('Authorization');
-        $authenticator = $this->container->get(AuthenticatorInterface::class);
+        if ($normalized === '/' || $normalized === '/mcp') {
+            return ['token' => null];
+        }
 
-        return $authenticator->authenticate($header !== '' ? $header : null);
+        if (preg_match('#^/mcp/([^/]+)$#', $normalized, $matches) === 1) {
+            return ['token' => $matches[1]];
+        }
+
+        return null;
+    }
+
+    private function requestAuthenticator(): RequestAuthenticator
+    {
+        return new RequestAuthenticator(
+            $this->container->get(AuthenticatorInterface::class),
+            $this->container->get(Config::class),
+        );
     }
 
     private function healthResponse(): ResponseInterface
@@ -84,6 +113,7 @@ final class Server
         $body = json_encode([
             'name' => Version::NAME,
             'version' => Version::read($this->basePath),
+            'mcp' => '/mcp',
         ], JSON_THROW_ON_ERROR);
 
         $response = $psr17->createResponse(200);
@@ -109,12 +139,24 @@ final class Server
         $response = $psr17->createResponse(401);
         $response->getBody()->write(json_encode([
             'error' => 'Unauthorized',
-            'message' => 'Valid Bearer API key required',
+            'message' => 'Provide a valid API key via Authorization Bearer, /mcp/<key>, or ?api_key=',
         ], JSON_THROW_ON_ERROR));
 
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withHeader('WWW-Authenticate', 'Bearer');
+    }
+
+    private function notFoundResponse(): ResponseInterface
+    {
+        $psr17 = new Psr17Factory();
+        $response = $psr17->createResponse(404);
+        $response->getBody()->write(json_encode([
+            'error' => 'Not Found',
+            'message' => 'Use /mcp (or /mcp/<api-key>) for MCP, /health for status',
+        ], JSON_THROW_ON_ERROR));
+
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     private function handleMcp(ServerRequestInterface $request): ResponseInterface

@@ -32,7 +32,17 @@ final class ApiKeyAuthenticatorTest extends TestCase
     {
         $auth = ApiKeyAuthenticator::fromKeys([]);
 
+        self::assertFalse($auth->hasKeys());
         self::assertFalse($auth->authenticate('Bearer anything'));
+        self::assertFalse($auth->isValidKey('anything'));
+    }
+
+    public function testIsValidKey(): void
+    {
+        $auth = ApiKeyAuthenticator::fromKeys(['abc']);
+
+        self::assertTrue($auth->isValidKey('abc'));
+        self::assertFalse($auth->isValidKey('xyz'));
     }
 
     public function testIsCaseInsensitiveOnBearerPrefix(): void

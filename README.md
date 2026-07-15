@@ -1,18 +1,72 @@
 # Local MCP Server
 
-Generic [Model Context Protocol](https://modelcontextprotocol.io) server that exposes modular tools to any AI agent (Cursor, Claude, Gemini, OpenAI, Ollama, llama.cpp, etc.). Credentials for external services stay on the server and are never sent to the model.
+Generic [Model Context Protocol](https://modelcontextprotocol.io) server for AI agents and Home Assistant. Credentials for external services stay on the server and are never sent to the model.
 
 **Image:** [`ghcr.io/igorbalbino/local-mcp`](https://github.com/igorbalbino/local-mcp-server/pkgs/container/local-mcp)
 
-## Features
+**MCP endpoint:** `/mcp` (Streamable HTTP)
 
-- Official PHP MCP SDK (`mcp/sdk`) with Streamable HTTP transport
-- Bearer API Key authentication between MCP clients and the server
-- Pluggable tools: Home Assistant, SearXNG, Browserless, Meilisearch (RAG), LibreTranslate
-- Configuration via environment variables
-- Published to GitHub Container Registry (GHCR)
+## Connect in 1 minute
 
-## Quick start (published image)
+### Home Assistant (MCP client)
+
+Home Assistant only asks for a **URL** (no Bearer field). Put the API key in the path:
+
+1. Set `LOCAL_MCP_API_KEYS` in `.env` (URL-safe: letters, numbers, `-`, `_`).
+2. Settings → Devices & services → Add integration → **Model Context Protocol**.
+3. Server URL:
+
+```text
+http://local-mcp:8080/mcp/YOUR_API_KEY
+```
+
+Use a hostname/IP that Home Assistant can reach (same Docker network → `http://local-mcp:8080/mcp/...`, or the host IP/port mapped, e.g. `http://192.168.x.x:8090/mcp/...`).
+
+4. Enable the tools you want in `.env` (`ENABLE_SEARXNG=true`, etc.) and configure your conversation agent to use MCP tools.
+
+If the server is on a fully trusted LAN and you want zero secrets in the URL:
+
+```env
+LOCAL_MCP_AUTH_MODE=none
+```
+
+Then use `http://local-mcp:8080/mcp`.
+
+### Cursor / other agents (Bearer header)
+
+```json
+{
+  "mcpServers": {
+    "local-mcp": {
+      "url": "http://localhost:8090/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+### Auth cheat sheet
+
+| Client | How to auth |
+|--------|-------------|
+| Home Assistant | `http://host:8090/mcp/<API_KEY>` |
+| Cursor / Inspector | `Authorization: Bearer <API_KEY>` on `/mcp` |
+| Any HTTP client | `?api_key=<API_KEY>` also works |
+
+`LOCAL_MCP_AUTH_MODE`: `auto` (default) · `none` · `bearer`
+
+## Quick start (Docker)
+
+```bash
+cp .env.example .env
+# set LOCAL_MCP_API_KEYS + ENABLE_* tools
+docker compose up -d
+curl http://localhost:8090/health
+```
+
+Published image:
 
 ```yaml
 services:
@@ -31,138 +85,48 @@ networks:
   local-mcp:
 ```
 
-```bash
-cp .env.example .env
-# set LOCAL_MCP_API_KEYS and enable the tools you need
-docker compose up -d
-```
+Dev build: `docker compose -f compose.dev.yml up --build -d`
 
-Or use the repo compose file:
+## Features
 
-```bash
-docker compose up -d
-```
-
-### Local development (build)
-
-```bash
-docker compose -f compose.dev.yml up --build -d
-```
-
-Health check (no auth):
-
-```bash
-curl http://localhost:8090/health
-# {"name":"Local MCP Server","version":"0.1.0"}
-```
-
-MCP endpoint: `http://localhost:8090/` with header `Authorization: Bearer <LOCAL_MCP_API_KEYS>`.
-
-### Cursor / MCP client
-
-```json
-{
-  "mcpServers": {
-    "local-mcp": {
-      "url": "http://localhost:8090",
-      "headers": {
-        "Authorization": "Bearer change-me-to-a-secure-key"
-      }
-    }
-  }
-}
-```
-
-Without Docker:
-
-```bash
-composer install
-cp .env.example .env
-php -S 0.0.0.0:8080 -t public public/index.php
-```
-
-## Versioning
-
-The file [`VERSION`](VERSION) holds the semver (currently `0.1.0`). `/health` and the MCP `serverInfo` use it. GitHub Actions tags GHCR images with this value plus `latest` on the default branch.
+- Streamable HTTP MCP (`mcp/sdk`) at `/mcp`
+- Plug-and-play with Home Assistant via `/mcp/<api-key>`
+- Bearer API key for Cursor and other clients
+- Tools: Home Assistant REST, SearXNG, Browserless, Meilisearch (RAG), LibreTranslate
+- Config via `.env`; secrets never returned to the model
 
 ## Environment variables
 
 | Variable | Description |
 |----------|-------------|
-| `LOCAL_MCP_API_KEYS` | Comma-separated API keys for client auth |
-| `MCP_SERVER_NAME` / `MCP_SERVER_VERSION` | Optional overrides (defaults: name + `VERSION` file) |
-| `LOG_LEVEL` | Monolog level (`info`, `debug`, …) |
-| `ENABLE_HOME_ASSISTANT` + `HA_URL` + `HA_TOKEN` | Home Assistant |
-| `ENABLE_SEARXNG` + `SEARXNG_URL` + `SEARXNG_API_KEY` | SearXNG |
-| `ENABLE_BROWSERLESS` + `BROWSERLESS_URL` + `BROWSERLESS_TOKEN` | Browserless |
-| `ENABLE_MEILISEARCH` + `MEILI_URL` + `MEILI_KEY` + `MEILI_INDEX` | Meilisearch RAG |
-| `ENABLE_LIBRETRANSLATE` + `LIBRETRANSLATE_URL` + `LIBRETRANSLATE_API_KEY` | LibreTranslate |
+| `LOCAL_MCP_API_KEYS` | API keys (comma-separated, URL-safe) |
+| `LOCAL_MCP_AUTH_MODE` | `auto` / `none` / `bearer` |
+| `MCP_SERVER_NAME` / `MCP_SERVER_VERSION` | Optional identity overrides |
+| `ENABLE_HOME_ASSISTANT` + `HA_URL` + `HA_TOKEN` | HA REST tools (`ha_*`) |
+| `ENABLE_SEARXNG` + `SEARXNG_URL` + … | Web search |
+| `ENABLE_BROWSERLESS` + … | Screenshots / PDF / HTML |
+| `ENABLE_MEILISEARCH` + … | RAG |
+| `ENABLE_LIBRETRANSLATE` + … | Translate |
+
+`HA_*` is only for the **optional** tools that call Home Assistant’s REST API. Connecting HA as an **MCP client** to this server uses `LOCAL_MCP_API_KEYS` (path or open mode), not `HA_TOKEN`.
 
 ## Tools
 
-| Tool | Integration | Purpose |
-|------|-------------|---------|
-| `ha_list_states` | Home Assistant | List entity states |
-| `ha_get_state` | Home Assistant | Get one entity |
-| `ha_call_service` | Home Assistant | Call a service |
-| `web_search` | SearXNG | Web search |
-| `browser_screenshot` | Browserless | Screenshot as base64 |
-| `browser_pdf` | Browserless | PDF as base64 |
-| `browser_content` | Browserless | Rendered HTML |
-| `rag_search` | Meilisearch | Search indexed docs |
-| `rag_index_document` | Meilisearch | Index a document |
-| `translate` | LibreTranslate | Translate text |
+| Tool | Integration |
+|------|-------------|
+| `ha_list_states`, `ha_get_state`, `ha_call_service` | Home Assistant REST |
+| `web_search` | SearXNG |
+| `browser_screenshot`, `browser_pdf`, `browser_content` | Browserless |
+| `rag_search`, `rag_index_document` | Meilisearch |
+| `translate` | LibreTranslate |
 
-A tool is registered only when its `ENABLE_*` flag is true and required URL (and token where needed) is set.
+## Versioning
 
-## Adding a new tool
+[`VERSION`](VERSION) → `/health` returns `{"name":"Local MCP Server","version":"0.1.0","mcp":"/mcp"}`.
 
-1. Create a Guzzle client in `src/Clients/` (secrets stay here).
-2. Create a class in `src/Tools/YourService/` implementing `ToolInterface` (or extending `AbstractTool`).
-3. Register the class in `config/tools.php`.
-4. Wire construction in `src/Core/ServiceProvider.php`.
-5. Document env vars in `.env.example`.
+## Docs
 
-## Project layout
-
-```
-local-mcp-server/
-├── src/
-├── public/
-├── config/
-├── storage/
-├── tests/
-├── okf/
-├── docker/
-│   └── php/
-│       └── Dockerfile
-├── .github/workflows/docker.yml
-├── docker-compose.yml
-├── compose.dev.yml
-├── VERSION
-├── LICENSE
-├── composer.json
-└── README.md
-```
-
-Feature docs: [`okf/README.md`](okf/README.md).
-
-## Tests
-
-```bash
-composer install
-composer test
-```
-
-## Pull the image
-
-```bash
-docker pull ghcr.io/igorbalbino/local-mcp:latest
-# or a pinned version
-docker pull ghcr.io/igorbalbino/local-mcp:0.1.0
-```
-
-GHCR packages from this repo may be private until you make the package public in GitHub → Packages.
+Feature knowledge base: [`okf/README.md`](okf/README.md) (see especially [`okf/auth/auth.md`](okf/auth/auth.md)).
 
 ## License
 

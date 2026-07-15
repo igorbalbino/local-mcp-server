@@ -43,9 +43,11 @@ Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromG
 
 | Path / method | Auth | Comportamento |
 |---------------|------|---------------|
-| `GET /health` | Não | `{"name":"Local MCP Server","version":"..."}` a partir de `VERSION` |
+| `GET /health` | Não | `{"name","version","mcp":"/mcp"}` |
 | `OPTIONS *` | Não | CORS |
-| Demais (MCP) | Sim | Streamable HTTP (`initialize`, `tools/list`, `tools/call`, …) |
+| `/mcp` | Conforme auth | Streamable HTTP (canônico) |
+| `/mcp/{api-key}` | Key no path | Streamable HTTP — plug-and-play Home Assistant |
+| `/` | Conforme auth | Alias de `/mcp` |
 
 ## Sessions
 

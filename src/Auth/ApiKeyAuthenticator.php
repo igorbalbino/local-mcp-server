@@ -27,12 +27,28 @@ final class ApiKeyAuthenticator implements AuthenticatorInterface
         return new self($config);
     }
 
-    public function authenticate(?string $authorizationHeader): bool
+    public function hasKeys(): bool
     {
-        if ($this->apiKeys === []) {
+        return $this->apiKeys !== [];
+    }
+
+    public function isValidKey(string $key): bool
+    {
+        if ($key === '' || !$this->hasKeys()) {
             return false;
         }
 
+        foreach ($this->apiKeys as $validKey) {
+            if (hash_equals($validKey, $key)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function authenticate(?string $authorizationHeader): bool
+    {
         if ($authorizationHeader === null || $authorizationHeader === '') {
             return false;
         }
@@ -41,14 +57,6 @@ final class ApiKeyAuthenticator implements AuthenticatorInterface
             return false;
         }
 
-        $provided = $matches[1];
-
-        foreach ($this->apiKeys as $validKey) {
-            if (hash_equals($validKey, $provided)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->isValidKey($matches[1]);
     }
 }
