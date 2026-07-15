@@ -1,2 +1,11 @@
 /vendor/
+/.env
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+/storage/cache/sessions/*
+!/storage/cache/sessions/.gitkeep
 composer.lock

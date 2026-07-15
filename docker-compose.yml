@@ -1,0 +1,21 @@
+services:
+  local-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local-mcp-server:local
+    container_name: local-mcp-server
+    ports:
+      - "${local_PORT:-8080}:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./storage/logs:/app/storage/logs
+      - ./storage/cache:/app/storage/cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

@@ -1,0 +1,68 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Jarvis\McpServer\Tools\Meilisearch;
+
+use Jarvis\McpServer\Clients\MeilisearchClient;
+use Jarvis\McpServer\Core\Config;
+use Jarvis\McpServer\Exceptions\IntegrationException;
+use Jarvis\McpServer\Tools\AbstractTool;
+
+final class RagIndexDocumentTool extends AbstractTool
+{
+    public function __construct(Config $config, MeilisearchClient $client)
+    {
+        parent::__construct($config, $client, 'ENABLE_MEILISEARCH');
+    }
+
+    public function name(): string
+    {
+        return 'rag_index_document';
+    }
+
+    public function description(): string
+    {
+        return 'Index a document into Meilisearch for later RAG search. Provide an object with at least an id field.';
+    }
+
+    public function inputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'properties' => [
+                'document' => [
+                    'type' => 'object',
+                    'description' => 'Document object to index (must include id)',
+                ],
+                'index' => [
+                    'type' => 'string',
+                    'description' => 'Optional index name (defaults to MEILI_INDEX)',
+                ],
+            ],
+            'required' => ['document'],
+        ];
+    }
+
+    public function handle(array $arguments): string|array
+    {
+        /** @var MeilisearchClient $client */
+        $client = $this->client;
+
+        if (!isset($arguments['document']) || !is_array($arguments['document'])) {
+            throw new IntegrationException('Missing or invalid argument: document');
+        }
+
+        /** @var array<string, mixed> $document */
+        $document = $arguments['document'];
+        $index = $this->optionalString($arguments, 'index');
+
+        $result = $client->indexDocument($document, $index);
+
+        return $this->json([
+            'taskUid' => $result['taskUid'] ?? null,
+            'indexUid' => $result['indexUid'] ?? $index ?? $client->getDefaultIndex(),
+            'status' => $result['status'] ?? 'enqueued',
+        ]);
+    }
+}
