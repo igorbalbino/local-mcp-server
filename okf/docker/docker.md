@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Runtime: imagem PHP 8.4 CLI Alpine + servidor built-in em `public/`, porta **8080**. A imagem é publicada em **GitHub Container Registry**:
+Runtime: **FrankenPHP** (Caddy + PHP 8.4 Alpine) servindo `public/` na porta **8080** — concorrente (necessário para o cliente MCP do Home Assistant). A imagem é publicada em **GitHub Container Registry**:
 
 `ghcr.io/igorbalbino/local-mcp`
 
@@ -18,7 +18,8 @@ Runtime: imagem PHP 8.4 CLI Alpine + servidor built-in em `public/`, porta **808
 
 | Arquivo | Papel |
 |---------|-------|
-| `docker/php/Dockerfile` | Multi-stage + labels OCI |
+| `docker/php/Dockerfile` | Multi-stage FrankenPHP + labels OCI |
+| `docker/php/Caddyfile` | Listen `:8080`, `root public/`, `php_server` |
 | `docker-compose.yml` | Consome imagem GHCR (`latest`) |
 | `compose.dev.yml` | Build local + volume do código |
 | `.dockerignore` | Exclui `.git`, `.github`, `vendor`, `tests`, logs, `.env*`, `README.md` |

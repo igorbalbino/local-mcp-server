@@ -15,7 +15,7 @@ Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromG
 | [tools](../tools/tools.md) | Cada tool vira `addTool()` no builder MCP |
 | [contracts](../contracts/contracts.md) | Handlers usam `ToolInterface` |
 | [exceptions](../exceptions/exceptions.md) | Erros de tool viram JSON `{ "error": "..." }` |
-| [docker](../docker/docker.md) | PHP built-in server aponta para `public/` |
+| [docker](../docker/docker.md) | FrankenPHP aponta para `public/` |
 
 ## Arquivos, classes e funções
 
