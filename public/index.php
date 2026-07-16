@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use LocalMcp\Server;
 use Dotenv\Dotenv;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -16,12 +17,4 @@ if (is_file($basePath . '/.env')) {
 $server = Server::boot($basePath);
 $response = $server->handleFromGlobals();
 
-http_response_code($response->getStatusCode());
-
-foreach ($response->getHeaders() as $name => $values) {
-    foreach ($values as $value) {
-        header(sprintf('%s: %s', $name, $value), false);
-    }
-}
-
-echo $response->getBody();
+(new SapiEmitter())->emit($response);

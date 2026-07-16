@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Runtime: **FrankenPHP** (Caddy + PHP 8.4 Alpine) servindo `public/` na porta **8080** — concorrente (necessário para o cliente MCP do Home Assistant). A imagem é publicada em **GitHub Container Registry**:
+Runtime: **FrankenPHP** (Caddy + PHP 8.4 Alpine) servindo `public/` na porta **8080** — concorrente (necessário para o cliente MCP do Home Assistant). Sem `encode` no Caddyfile (evita buffer em streams). A imagem é publicada em **GitHub Container Registry**:
 
 `ghcr.io/igorbalbino/local-mcp`
 

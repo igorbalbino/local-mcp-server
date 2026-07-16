@@ -12,7 +12,8 @@
     "require": {
         "php": "^8.4",
         "guzzlehttp/guzzle": "^7.14",
-        "mcp/sdk": "^0.3",
+        "laminas/laminas-httphandlerrunner": "^2.13",
+        "mcp/sdk": "^0.7",
         "monolog/monolog": "^3.10",
         "nyholm/psr7": "^1.8",
         "nyholm/psr7-server": "^1.1",

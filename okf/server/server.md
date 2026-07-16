@@ -4,24 +4,24 @@
 
 `LocalMcp\Server` é a facade: carrega o DI, roteia `/health`, valida auth e executa o protocolo MCP via `mcp/sdk` (`StreamableHttpTransport` + `FileSessionStore`).
 
-Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromGlobals` → headers + body).
+Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromGlobals` → `SapiEmitter`).
 
 ## Relacionamentos
 
 | Assunto | Relação |
 |---------|---------|
-| [auth](../auth/auth.md) | Gate Bearer antes do MCP |
+| [auth](../auth/auth.md) | Gate (Bearer / path key / `none`) antes do MCP |
 | [core](../core/core.md) | `boot()` / container / registry / logger |
 | [tools](../tools/tools.md) | Cada tool vira `addTool()` no builder MCP |
 | [contracts](../contracts/contracts.md) | Handlers usam `ToolInterface` |
 | [exceptions](../exceptions/exceptions.md) | Erros de tool viram JSON `{ "error": "..." }` |
-| [docker](../docker/docker.md) | FrankenPHP aponta para `public/` |
+| [docker](../docker/docker.md) | FrankenPHP aponta para `public/` (sem gzip no Caddy) |
 
 ## Arquivos, classes e funções
 
 | Arquivo | Classe / símbolo | Métodos |
 |---------|------------------|---------|
-| `public/index.php` | script | Carrega `.env`, emite resposta PSR-7 |
+| `public/index.php` | script | Carrega `.env`, emite resposta via `SapiEmitter` |
 | `src/Server.php` | `Server` | ver tabela abaixo |
 
 ### Métodos de `Server`
@@ -36,7 +36,7 @@ Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromG
 | `healthResponse()` | JSON `{ status, server, tools }` |
 | `optionsResponse()` | CORS preflight 204 |
 | `unauthorizedResponse()` | 401 JSON |
-| `handleMcp()` | Monta `Mcp\Server` builder, registra tools, roda transport |
+| `handleMcp()` | Monta `Mcp\Server` builder, registra tools, roda transport, garante `Mcp-Session-Id` |
 | `createHandler(ToolInterface): Closure` | Lê `CallToolRequest` via `RequestContext` e chama `handle(array)` |
 
 ## Rotas

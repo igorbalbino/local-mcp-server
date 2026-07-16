@@ -23,6 +23,8 @@ use Nyholm\Psr7Server\ServerRequestCreator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use ReflectionObject;
+use Symfony\Component\Uid\Uuid;
 
 final class Server
 {
@@ -195,14 +197,56 @@ final class Server
         $mcpServer = $builder->build();
         $psr17 = new Psr17Factory();
 
+        // Empty middleware disables SDK DNS-rebinding allowlist (localhost-only),
+        // so Docker hostnames like local-mcp work. Auth stays in Server::handle.
         $transport = new StreamableHttpTransport(
             request: $request,
             responseFactory: $psr17,
             streamFactory: $psr17,
             logger: $logger,
+            middleware: [],
         );
 
-        return $mcpServer->run($transport);
+        $response = $mcpServer->run($transport);
+
+        return $this->ensureSessionHeader($response, $transport);
+    }
+
+    /**
+     * Some SDK response paths omit Mcp-Session-Id; HA Streamable clients need it.
+     */
+    private function ensureSessionHeader(
+        ResponseInterface $response,
+        StreamableHttpTransport $transport,
+    ): ResponseInterface {
+        if ($response->hasHeader('Mcp-Session-Id')) {
+            return $response;
+        }
+
+        $sessionId = $this->readTransportSessionId($transport);
+        if ($sessionId === null) {
+            return $response;
+        }
+
+        return $response->withHeader('Mcp-Session-Id', $sessionId);
+    }
+
+    private function readTransportSessionId(StreamableHttpTransport $transport): ?string
+    {
+        $reflection = new ReflectionObject($transport);
+        if (!$reflection->hasProperty('sessionId')) {
+            return null;
+        }
+
+        $property = $reflection->getProperty('sessionId');
+        $property->setAccessible(true);
+        $sessionId = $property->getValue($transport);
+
+        if ($sessionId instanceof Uuid) {
+            return $sessionId->toRfc4122();
+        }
+
+        return is_string($sessionId) && $sessionId !== '' ? $sessionId : null;
     }
 
     /**

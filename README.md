@@ -10,11 +10,11 @@ Generic [Model Context Protocol](https://modelcontextprotocol.io) server for AI 
 
 ### Home Assistant (MCP client)
 
-Home Assistant only asks for a **URL** (no Bearer field). Put the API key in the path:
+Home Assistant **≥ 2026.2** talks **Streamable HTTP** to `/mcp` first (the official docs still mention SSE; that is legacy fallback only). HA only asks for a **URL** (no Bearer field). Put the API key in the path, or leave OAuth Client ID/Secret empty.
 
-1. Set `LOCAL_MCP_API_KEYS` in `.env` (URL-safe: letters, numbers, `-`, `_`).
+1. Set `LOCAL_MCP_API_KEYS` in `.env` (URL-safe: letters, numbers, `-`, `_`), or use `LOCAL_MCP_AUTH_MODE=none` on a trusted LAN.
 2. Settings → Devices & services → Add integration → **Model Context Protocol**.
-3. Server URL:
+3. Server URL (leave OAuth fields blank):
 
 ```text
 http://local-mcp:8080/mcp/YOUR_API_KEY
@@ -22,7 +22,8 @@ http://local-mcp:8080/mcp/YOUR_API_KEY
 
 Use a hostname/IP that Home Assistant can reach (same Docker network → `http://local-mcp:8080/mcp/...`, or the host IP/port mapped, e.g. `http://192.168.x.x:8090/mcp/...`).
 
-4. Enable the tools you want in `.env` (`ENABLE_SEARXNG=true`, etc.) and configure your conversation agent to use MCP tools.
+4. Enable the tools you want in `.env` (`ENABLE_SEARXNG=true`, etc.).
+5. Configure your **conversation agent** to use the MCP tools (adding the integration alone is not enough).
 
 If the server is on a fully trusted LAN and you want zero secrets in the URL:
 
@@ -31,6 +32,15 @@ LOCAL_MCP_AUTH_MODE=none
 ```
 
 Then use `http://local-mcp:8080/mcp`.
+
+Quick check that `initialize` returns a session (write JSON **without BOM** — on Windows PowerShell 5 use .NET, not `Set-Content -Encoding utf8`):
+
+```powershell
+[System.IO.File]::WriteAllText("$PWD\init.json", '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}', [System.Text.UTF8Encoding]::new($false))
+curl.exe -sS -D - -X POST "http://127.0.0.1:8090/mcp" -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" --data-binary "@init.json"
+```
+
+Expect **200**, header **`Mcp-Session-Id`**, and an `InitializeResult` body.
 
 ### Cursor / other agents (Bearer header)
 
