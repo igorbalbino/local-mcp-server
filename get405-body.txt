@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":null,"error":{"code":-32600,"message":"Accept must include text\/event-stream for GET on the MCP endpoint"}}

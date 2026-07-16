@@ -2,7 +2,7 @@
 
 ## Contexto
 
-`LocalMcp\Server` é a facade: carrega o DI, roteia `/health`, valida auth e executa o protocolo MCP via `mcp/sdk` (`StreamableHttpTransport` + `FileSessionStore`).
+`LocalMcp\Server` é a facade: carrega o DI, roteia `/health`, valida auth e executa o protocolo MCP via `mcp/sdk` (`StreamableHttpTransport` + `FileSessionStore`). **GET** no `/mcp` abre um stream SSE (Streamable) — necessário para o cliente do Home Assistant; o SDK sozinho responde 405.
 
 Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromGlobals` → `SapiEmitter`).
 
@@ -36,7 +36,8 @@ Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromG
 | `healthResponse()` | JSON `{ status, server, tools }` |
 | `optionsResponse()` | CORS preflight 204 |
 | `unauthorizedResponse()` | 401 JSON |
-| `handleMcp()` | Monta `Mcp\Server` builder, registra tools, roda transport, garante `Mcp-Session-Id` |
+| `handleMcp()` | POST/DELETE Streamable via SDK; GET → `handleMcpGet()` |
+| `handleMcpGet()` | SSE `text/event-stream` com `Mcp-Session-Id` (HA) |
 | `createHandler(ToolInterface): Closure` | Lê `CallToolRequest` via `RequestContext` e chama `handle(array)` |
 
 ## Rotas
@@ -45,8 +46,10 @@ Entry point SAPI: `public/index.php` (Dotenv → `Server::boot` → `handleFromG
 |---------------|------|---------------|
 | `GET /health` | Não | `{"name","version","mcp":"/mcp"}` |
 | `OPTIONS *` | Não | CORS |
-| `/mcp` | Conforme auth | Streamable HTTP (canônico) |
-| `/mcp/{api-key}` | Key no path | Streamable HTTP — plug-and-play Home Assistant |
+| `POST /mcp` | Conforme auth | Streamable HTTP (JSON-RPC) |
+| `GET /mcp` | Conforme auth | Streamable SSE (`Accept: text/event-stream` + session) |
+| `DELETE /mcp` | Conforme auth | Encerra sessão MCP |
+| `/mcp/{api-key}` | Key no path | Mesmos métodos — plug-and-play Home Assistant |
 | `/` | Conforme auth | Alias de `/mcp` |
 
 ## Sessions

@@ -4,7 +4,7 @@ Generic [Model Context Protocol](https://modelcontextprotocol.io) server for AI 
 
 **Image:** [`ghcr.io/igorbalbino/local-mcp`](https://github.com/igorbalbino/local-mcp-server/pkgs/container/local-mcp)
 
-**MCP endpoint:** `/mcp` (Streamable HTTP)
+**MCP endpoint:** `/mcp` (Streamable HTTP — POST JSON-RPC + GET SSE)
 
 ## Connect in 1 minute
 
@@ -41,6 +41,14 @@ curl.exe -sS -D - -X POST "http://127.0.0.1:8090/mcp" -H "Content-Type: applicat
 ```
 
 Expect **200**, header **`Mcp-Session-Id`**, and an `InitializeResult` body.
+
+Then open the Streamable GET SSE channel (Home Assistant does this after initialize):
+
+```powershell
+curl.exe -N --max-time 3 -D - -X GET "http://127.0.0.1:8090/mcp" -H "Accept: text/event-stream" -H "Mcp-Session-Id: PASTE_SESSION_ID"
+```
+
+Expect **200** `text/event-stream` and a `: connected` comment (not **405**).
 
 ### Cursor / other agents (Bearer header)
 
