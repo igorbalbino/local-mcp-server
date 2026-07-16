@@ -195,14 +195,11 @@ final class Server
         $mcpServer = $builder->build();
         $psr17 = new Psr17Factory();
 
-        // Empty middleware: skip SDK DNS-rebinding allowlist (localhost-only),
-        // so Docker hostnames like local-mcp work. Auth/CORS stay in Server::handle.
         $transport = new StreamableHttpTransport(
             request: $request,
             responseFactory: $psr17,
             streamFactory: $psr17,
             logger: $logger,
-            middleware: [],
         );
 
         return $mcpServer->run($transport);
