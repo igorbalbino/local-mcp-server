@@ -72,4 +72,36 @@ final class RequestAuthenticatorTest extends TestCase
         self::assertFalse($auth->isRequired());
         self::assertTrue($auth->authorize(new ServerRequest('POST', 'http://localhost/mcp'), null));
     }
+
+    public function testPathLocationDisabledRejectsPathToken(): void
+    {
+        $auth = new RequestAuthenticator(
+            ApiKeyAuthenticator::fromKeys(['secret-key']),
+            new Config([
+                'LOCAL_MCP_AUTH_MODE' => 'auto',
+                'LOCAL_MCP_AUTH_LOCATION' => 'header',
+            ]),
+        );
+
+        $request = new ServerRequest('POST', 'http://localhost/mcp/secret-key');
+
+        self::assertFalse($auth->authorize($request, 'secret-key'));
+    }
+
+    public function testHeaderLocationDisabledRejectsBearer(): void
+    {
+        $auth = new RequestAuthenticator(
+            ApiKeyAuthenticator::fromKeys(['secret-key']),
+            new Config([
+                'LOCAL_MCP_AUTH_MODE' => 'auto',
+                'LOCAL_MCP_AUTH_LOCATION' => 'path',
+            ]),
+        );
+
+        $request = (new ServerRequest('POST', 'http://localhost/mcp'))
+            ->withHeader('Authorization', 'Bearer secret-key');
+
+        self::assertFalse($auth->authorize($request, null));
+        self::assertTrue($auth->authorize($request, 'secret-key'));
+    }
 }

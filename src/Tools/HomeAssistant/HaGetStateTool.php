@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools\HomeAssistant;
 
-use LocalMcp\Clients\HomeAssistantClient;
+use LocalMcp\Providers\HomeAssistant\HomeAssistantProvider;
 use LocalMcp\Core\Config;
 use LocalMcp\Tools\AbstractTool;
 
 final class HaGetStateTool extends AbstractTool
 {
-    public function __construct(Config $config, HomeAssistantClient $client)
+    public function __construct(Config $config, HomeAssistantProvider $provider)
     {
-        parent::__construct($config, $client, 'ENABLE_HOME_ASSISTANT');
+        parent::__construct($config, $provider, 'ENABLE_HOME_ASSISTANT');
     }
 
     public function name(): string
@@ -41,10 +41,10 @@ final class HaGetStateTool extends AbstractTool
 
     public function handle(array $arguments): string|array
     {
-        /** @var HomeAssistantClient $client */
-        $client = $this->client;
+        /** @var HomeAssistantProvider $provider */
+        $provider = $this->provider;
         $entityId = $this->requireString($arguments, 'entity_id');
-        $state = $client->getState($entityId);
+        $state = $provider->getState($entityId);
 
         return $this->json([
             'entity_id' => $state['entity_id'] ?? $entityId,

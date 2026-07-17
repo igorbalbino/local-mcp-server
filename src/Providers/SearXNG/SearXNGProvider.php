@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace LocalMcp\Clients;
+namespace LocalMcp\Providers\SearXNG;
 
 use LocalMcp\Core\Config;
+use LocalMcp\Providers\AbstractHttpProvider;
 
-final class SearxngClient extends AbstractHttpClient
+final class SearXNGProvider extends AbstractHttpProvider
 {
     public function __construct(Config $config, ?\GuzzleHttp\Client $http = null)
     {
         parent::__construct(
-            baseUrl: $config->string('SEARXNG_URL'),
-            token: $config->get('SEARXNG_API_KEY'),
+            baseUrl: $config->searxngUrl(),
+            token: $config->searxngApiKey(),
             http: $http,
         );
     }
@@ -36,10 +37,8 @@ final class SearxngClient extends AbstractHttpClient
             $queryParams['language'] = $language;
         }
 
-        $headers = $this->bearerHeaders();
-
         $response = $this->request('GET', 'search', [
-            'headers' => $headers,
+            'headers' => $this->bearerHeaders(),
             'query' => $queryParams,
         ]);
         $this->ensureSuccess($response, 'SearXNG');

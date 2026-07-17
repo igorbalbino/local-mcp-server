@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace LocalMcp\Clients;
+namespace LocalMcp\Providers\LibreTranslate;
 
 use LocalMcp\Core\Config;
+use LocalMcp\Providers\AbstractHttpProvider;
 
-final class LibreTranslateClient extends AbstractHttpClient
+final class LibreTranslateProvider extends AbstractHttpProvider
 {
     public function __construct(Config $config, ?\GuzzleHttp\Client $http = null)
     {
         parent::__construct(
-            baseUrl: $config->string('LIBRETRANSLATE_URL'),
-            token: $config->get('LIBRETRANSLATE_API_KEY'),
+            baseUrl: $config->libreTranslateUrl(),
+            token: $config->libreTranslateApiKey(),
             http: $http,
         );
     }

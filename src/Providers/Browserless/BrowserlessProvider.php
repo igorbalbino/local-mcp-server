@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace LocalMcp\Clients;
+namespace LocalMcp\Providers\Browserless;
 
 use LocalMcp\Core\Config;
+use LocalMcp\Providers\AbstractHttpProvider;
 
-final class BrowserlessClient extends AbstractHttpClient
+final class BrowserlessProvider extends AbstractHttpProvider
 {
     public function __construct(Config $config, ?\GuzzleHttp\Client $http = null)
     {
         parent::__construct(
-            baseUrl: $config->string('BROWSERLESS_URL'),
-            token: $config->get('BROWSERLESS_TOKEN'),
+            baseUrl: $config->browserlessUrl(),
+            token: $config->browserlessToken(),
             timeout: 60.0,
             http: $http,
         );

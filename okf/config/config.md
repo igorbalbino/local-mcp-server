@@ -2,40 +2,29 @@
 
 ## Contexto
 
-Toda configuração operacional passa por variáveis de ambiente (arquivo `.env` em runtime; `.env.example` como template). `vlucas/phpdotenv` carrega no `public/index.php`. A API tipada é `LocalMcp\Core\Config`.
+Toda configuração operacional passa por variáveis de ambiente. `vlucas/phpdotenv` carrega no `public/index.php`. A API tipada é `LocalMcp\Core\Config`.
 
 ## Relacionamentos
 
 | Assunto | Relação |
 |---------|---------|
 | [core](../core/core.md) | Classe `Config` |
-| [auth](../auth/auth.md) | `LOCAL_MCP_API_KEYS`, `LOCAL_MCP_AUTH_MODE` |
-| [tools](../tools/tools.md) / integrações | `ENABLE_*` + URLs/tokens |
-| [docker](../docker/docker.md) | `env_file: .env` no compose |
-| [server](../server/server.md) | `MCP_SERVER_NAME`, `MCP_SERVER_VERSION`, `LOG_LEVEL` |
-
-## Arquivos
-
-| Arquivo | Papel |
-|---------|-------|
-| `.env` | Secrets locais (**gitignored**) |
-| `.env.example` | Template commitado |
-| `config/tools.php` | Mapa estático de classes de tools (não é secret) |
-| `src/Core/Config.php` | Leitura tipada |
+| [auth](../auth/auth.md) | Keys, mode, location |
+| [tools](../tools/tools.md) / providers | `ENABLE_*` + URLs/tokens |
+| [docker](../docker/docker.md) | `env_file: .env` |
 
 ## Variáveis globais
 
 | Var | Default / notas |
 |-----|-----------------|
-| `APP_NAME` | Nome da app |
-| `APP_ENV` | `production` / `local` |
-| `LOG_LEVEL` | `info`, `debug`, … |
-| `MCP_SERVER_NAME` | Identidade MCP |
-| `MCP_SERVER_VERSION` | Semver |
-| `LOCAL_MCP_API_KEYS` | Keys do cliente MCP (URL-safe) |
+| `LOCAL_MCP_API_KEYS` | Keys do cliente MCP (URL-safe); vazio no `.env.example` |
 | `LOCAL_MCP_AUTH_MODE` | `auto` / `none` / `bearer` |
+| `LOCAL_MCP_AUTH_LOCATION` | `header,path,query` |
+| `LOCAL_MCP_ALLOWED_HOSTS` | Extra hosts (além de localhost + `local-mcp`) |
+| `LOCAL_MCP_CORS_ORIGINS` | `*` default |
+| `MCP_SERVER_NAME` / `MCP_SERVER_VERSION` | Identidade MCP |
 
-## Feature flags por integração
+## Feature flags
 
 | Flag | URL / secrets |
 |------|----------------|
@@ -45,15 +34,6 @@ Toda configuração operacional passa por variáveis de ambiente (arquivo `.env`
 | `ENABLE_MEILISEARCH` | `MEILI_URL`, `MEILI_KEY`, `MEILI_INDEX` |
 | `ENABLE_LIBRETRANSLATE` | `LIBRETRANSLATE_URL`, `LIBRETRANSLATE_API_KEY` |
 
-Uma tool só registra se flag `true` **e** `client->isConfigured()`.
-
 ## API `Config`
 
-| Método | Comportamento |
-|--------|----------------|
-| `fromEnv()` | Snapshot `$_ENV` / `$_SERVER` |
-| `get($key, $default)` | `null` se ausente ou string vazia |
-| `require($key)` | Lança `ConfigurationException` |
-| `bool($key)` | `FILTER_VALIDATE_BOOLEAN` |
-| `list($key)` | Split por vírgula + trim |
-| `string($key, $default)` | Sempre string |
+Além de `get` / `require` / `bool` / `list` / `string`, accessors tipados: `mcpApiKeys()`, `authMode()`, `authLocations()`, `allowedHosts()`, `corsOrigins()`, `homeAssistantUrl()`, `searxngUrl()`, `browserlessUrl()`, `meilisearchUrl()`, `libreTranslateUrl()`, etc.

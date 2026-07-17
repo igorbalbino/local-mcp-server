@@ -10,7 +10,7 @@ Exceções de domínio para falhas previsíveis. Tools capturam `IntegrationExce
 |---------|---------|
 | [auth](../auth/auth.md) | `AuthenticationException` |
 | [config](../config/config.md) / [core](../core/core.md) | `ConfigurationException` (`Config::require`) |
-| [clients](../clients/clients.md) / [tools](../tools/tools.md) | `IntegrationException` em HTTP/args inválidos |
+| [providers](../providers/providers.md) / [tools](../tools/tools.md) | `IntegrationException` em HTTP/args inválidos |
 | [server](../server/server.md) | `createHandler()` captura `IntegrationException` e `\Throwable` genérico |
 | [core](../core/core.md) | `ServiceNotFoundException` no container PSR-11 |
 

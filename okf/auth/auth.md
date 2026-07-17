@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Controla quem pode usar o endpoint MCP. Home Assistant (cliente MCP oficial) **não permite** configurar header Bearer na UI — só uma URL. Por isso o servidor aceita a API key de três jeitos.
+Controla quem pode usar o endpoint MCP. Home Assistant (cliente MCP oficial) **não permite** configurar header Bearer na UI — só uma URL. Por isso o servidor aceita a API key de três jeitos (quando habilitados em `LOCAL_MCP_AUTH_LOCATION`).
 
 ## Formas de autenticar
 
@@ -20,12 +20,16 @@ Controla quem pode usar o endpoint MCP. Home Assistant (cliente MCP oficial) **n
 | `none` | Sempre aberto (LAN confiável) |
 | `bearer` | Sempre exige key (falha se não houver keys) |
 
+## Locations (`LOCAL_MCP_AUTH_LOCATION`)
+
+Default: `header,path,query`. Se `path` não estiver na lista, `/mcp/<segment>` responde **404** (não trata o segmento como key).
+
 ## Relacionamentos
 
 | Assunto | Relação |
 |---------|---------|
-| [server](../server/server.md) | `Server::handle()` chama `RequestAuthenticator` |
-| [config](../config/config.md) | `LOCAL_MCP_API_KEYS`, `LOCAL_MCP_AUTH_MODE` |
+| [server](../server/server.md) | Pipeline Logging → Authentication → Transport |
+| [config](../config/config.md) | `LOCAL_MCP_API_KEYS`, `LOCAL_MCP_AUTH_MODE`, `LOCAL_MCP_AUTH_LOCATION` |
 | [contracts](../contracts/contracts.md) | `AuthenticatorInterface` |
 
 ## Arquivos, classes e funções
@@ -35,19 +39,22 @@ Controla quem pode usar o endpoint MCP. Home Assistant (cliente MCP oficial) **n
 | `src/Contracts/AuthenticatorInterface.php` | interface | `hasKeys()`, `isValidKey()`, `authenticate(?header)` |
 | `src/Auth/ApiKeyAuthenticator.php` | `ApiKeyAuthenticator` | validação `hash_equals` das keys |
 | `src/Auth/RequestAuthenticator.php` | `RequestAuthenticator` | `isRequired()`, `authorize(request, pathToken?)` |
-| `src/Auth/AuthMiddleware.php` | `AuthMiddleware` | PSR-15 (Bearer header) |
+| `src/Middleware/AuthenticationMiddleware.php` | `AuthenticationMiddleware` | PSR-15 gate (Bearer / path / query) |
+
+OAuth fica como extension point futuro via `AuthenticatorInterface` — sem alterar o pipeline.
 
 ## Variáveis
 
 - `LOCAL_MCP_API_KEYS` — keys URL-safe (`a-zA-Z0-9-_`)
 - `LOCAL_MCP_AUTH_MODE` — `auto` \| `none` \| `bearer`
+- `LOCAL_MCP_AUTH_LOCATION` — `header`, `path`, `query`
 
 ## Home Assistant (cliente MCP)
 
-Na integração **Model Context Protocol** (HA ≥ 2026.2), informe só a URL Streamable em `/mcp`. A doc oficial ainda cita SSE; o core tenta Streamable primeiro. Deixe OAuth Client ID/Secret **vazios** (este server usa API key no path ou `LOCAL_MCP_AUTH_MODE=none`, não OAuth).
+Na integração **Model Context Protocol** (HA ≥ 2026.2), informe só a URL Streamable em `/mcp`. Deixe OAuth Client ID/Secret **vazios**.
 
 ```text
-http://local-mcp:8080/mcp/change-me-to-a-secure-key
+http://local-mcp:8080/mcp/<YOUR_API_KEY>
 ```
 
 (use o hostname/IP alcançável pelo HA e a mesma key do `.env`)
@@ -71,7 +78,7 @@ Deve retornar header `Mcp-Session-Id`.
     "local-mcp": {
       "url": "http://localhost:8090/mcp",
       "headers": {
-        "Authorization": "Bearer change-me-to-a-secure-key"
+        "Authorization": "Bearer <YOUR_API_KEY>"
       }
     }
   }

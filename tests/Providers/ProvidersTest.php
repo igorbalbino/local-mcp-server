@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace LocalMcp\Tests\Clients;
+namespace LocalMcp\Tests\Providers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use LocalMcp\Clients\HomeAssistantClient;
-use LocalMcp\Clients\SearxngClient;
 use LocalMcp\Core\Config;
+use LocalMcp\Providers\HomeAssistant\HomeAssistantProvider;
+use LocalMcp\Providers\SearXNG\SearXNGProvider;
 use PHPUnit\Framework\TestCase;
 
-final class ClientsTest extends TestCase
+final class ProvidersTest extends TestCase
 {
     public function testHomeAssistantListStates(): void
     {
@@ -23,7 +23,7 @@ final class ClientsTest extends TestCase
             ], JSON_THROW_ON_ERROR)),
         ]);
 
-        $client = new HomeAssistantClient(
+        $provider = new HomeAssistantProvider(
             new Config([
                 'HA_URL' => 'http://ha.test',
                 'HA_TOKEN' => 'token',
@@ -31,11 +31,11 @@ final class ClientsTest extends TestCase
             new Client(['handler' => HandlerStack::create($mock), 'http_errors' => false]),
         );
 
-        $states = $client->listStates();
+        $states = $provider->listStates();
 
         self::assertCount(1, $states);
         self::assertSame('light.kitchen', $states[0]['entity_id']);
-        self::assertTrue($client->isConfigured());
+        self::assertTrue($provider->isConfigured());
     }
 
     public function testSearxngSearch(): void
@@ -50,12 +50,12 @@ final class ClientsTest extends TestCase
             ], JSON_THROW_ON_ERROR)),
         ]);
 
-        $client = new SearxngClient(
+        $provider = new SearXNGProvider(
             new Config(['SEARXNG_URL' => 'http://searx.test']),
             new Client(['handler' => HandlerStack::create($mock), 'http_errors' => false]),
         );
 
-        $result = $client->search('php mcp');
+        $result = $provider->search('php mcp');
 
         self::assertSame('php mcp', $result['query']);
         self::assertCount(1, $result['results']);
@@ -63,8 +63,8 @@ final class ClientsTest extends TestCase
 
     public function testHomeAssistantNotConfiguredWithoutToken(): void
     {
-        $client = new HomeAssistantClient(new Config(['HA_URL' => 'http://ha.test']));
+        $provider = new HomeAssistantProvider(new Config(['HA_URL' => 'http://ha.test']));
 
-        self::assertFalse($client->isConfigured());
+        self::assertFalse($provider->isConfigured());
     }
 }

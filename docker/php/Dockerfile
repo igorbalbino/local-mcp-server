@@ -22,6 +22,8 @@ LABEL org.opencontainers.image.description="Generic MCP Server for AI Agents"
 LABEL org.opencontainers.image.source="https://github.com/igorbalbino/local-mcp-server"
 LABEL org.opencontainers.image.licenses="MIT"
 
+ENV PHP_MAX_EXECUTION_TIME=0
+
 RUN apk add --no-cache wget \
     && mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
@@ -29,6 +31,7 @@ WORKDIR /app
 
 COPY --from=vendor /app /app
 COPY docker/php/Caddyfile /etc/caddy/Caddyfile
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-mcp.ini
 
 RUN mkdir -p storage/logs storage/cache/sessions \
     && chown -R www-data:www-data storage

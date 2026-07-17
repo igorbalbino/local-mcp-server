@@ -8,7 +8,7 @@ Renderização headless: screenshot, PDF e HTML de URLs. Token Browserless fica 
 
 | Assunto | Relação |
 |---------|---------|
-| [clients](../clients/clients.md) | `BrowserlessClient` |
+| [providers](../providers/providers.md) | `BrowserlessProvider` |
 | [tools](../tools/tools.md) | Três tools browser_* |
 | [config](../config/config.md) | `ENABLE_BROWSERLESS`, `BROWSERLESS_URL`, `BROWSERLESS_TOKEN` |
 
@@ -24,11 +24,11 @@ Timeout do client: **60s** (render pode ser lento).
 
 ## Arquivos, classes e funções
 
-### Client
+### Provider
 
 | Arquivo | Classe | Métodos |
 |---------|--------|---------|
-| `src/Clients/BrowserlessClient.php` | `BrowserlessClient` | `screenshot(url, width?, height?)`, `pdf(url)`, `content(url)`, `tokenizedPath(path)` (privado) |
+| `src/Providers/Browserless/BrowserlessProvider.php` | `BrowserlessProvider` | `screenshot(url, width?, height?)`, `pdf(url)`, `content(url)`, `tokenizedPath(path)` (privado) |
 
 ### Tools
 

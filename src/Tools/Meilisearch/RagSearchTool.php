@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools\Meilisearch;
 
-use LocalMcp\Clients\MeilisearchClient;
+use LocalMcp\Providers\Meilisearch\MeilisearchProvider;
 use LocalMcp\Core\Config;
 use LocalMcp\Tools\AbstractTool;
 
 final class RagSearchTool extends AbstractTool
 {
-    public function __construct(Config $config, MeilisearchClient $client)
+    public function __construct(Config $config, MeilisearchProvider $provider)
     {
-        parent::__construct($config, $client, 'ENABLE_MEILISEARCH');
+        parent::__construct($config, $provider, 'ENABLE_MEILISEARCH');
     }
 
     public function name(): string
@@ -51,13 +51,13 @@ final class RagSearchTool extends AbstractTool
 
     public function handle(array $arguments): string|array
     {
-        /** @var MeilisearchClient $client */
-        $client = $this->client;
+        /** @var MeilisearchProvider $provider */
+        $provider = $this->provider;
         $query = $this->requireString($arguments, 'query');
         $index = $this->optionalString($arguments, 'index');
         $limit = $this->optionalInt($arguments, 'limit', 10) ?? 10;
 
-        $result = $client->search($query, $index, $limit);
+        $result = $provider->search($query, $index, $limit);
 
         return $this->json([
             'query' => $query,

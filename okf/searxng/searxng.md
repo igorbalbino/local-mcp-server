@@ -8,7 +8,7 @@ Busca web privativa via instância SearXNG (`format=json`). Resultado sanitizado
 
 | Assunto | Relação |
 |---------|---------|
-| [clients](../clients/clients.md) | `SearxngClient` |
+| [providers](../providers/providers.md) | `SearXNGProvider` |
 | [tools](../tools/tools.md) | `WebSearchTool` |
 | [config](../config/config.md) | `ENABLE_SEARXNG`, `SEARXNG_URL`, `SEARXNG_API_KEY` |
 | [auth](../auth/auth.md) | Auth Local MCP separada |
@@ -25,10 +25,10 @@ Busca web privativa via instância SearXNG (`format=json`). Resultado sanitizado
 
 | Arquivo | Classe | Métodos / nome MCP |
 |---------|--------|-------------------|
-| `src/Clients/SearxngClient.php` | `SearxngClient` | `search(query, pageno, categories?, language?)` → `GET search` |
+| `src/Providers/SearXNG/SearXNGProvider.php` | `SearXNGProvider` | `search(query, pageno, categories?, language?)` → `GET search` |
 | `src/Tools/Searxng/WebSearchTool.php` | `WebSearchTool` | MCP `web_search` — args: `query`, `pageno`, `categories`, `language` |
 
 ## Wiring
 
 - `config/tools.php` → `WebSearchTool::class`
-- `ServiceProvider` → `new WebSearchTool($config, SearxngClient)`
+- `ServiceProvider` → `new WebSearchTool($config, SearXNGProvider)`

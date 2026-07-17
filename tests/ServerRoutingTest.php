@@ -16,6 +16,10 @@ final class ServerRoutingTest extends TestCase
         $_SERVER['LOCAL_MCP_API_KEYS'] = 'test-key';
         $_ENV['LOCAL_MCP_AUTH_MODE'] = 'auto';
         $_SERVER['LOCAL_MCP_AUTH_MODE'] = 'auto';
+        $_ENV['LOCAL_MCP_AUTH_LOCATION'] = 'header,path,query';
+        $_SERVER['LOCAL_MCP_AUTH_LOCATION'] = 'header,path,query';
+        $_ENV['LOCAL_MCP_ALLOWED_HOSTS'] = 'localhost,127.0.0.1';
+        $_SERVER['LOCAL_MCP_ALLOWED_HOSTS'] = 'localhost,127.0.0.1';
     }
 
     public function testHealthIsPublic(): void
@@ -25,6 +29,7 @@ final class ServerRoutingTest extends TestCase
 
         self::assertSame(200, $response->getStatusCode());
         $body = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('ok', $body['status']);
         self::assertSame('/mcp', $body['mcp']);
     }
 
@@ -49,8 +54,18 @@ final class ServerRoutingTest extends TestCase
         $server = Server::boot(dirname(__DIR__));
         $response = $server->handle(new ServerRequest('POST', 'http://localhost/mcp/test-key'));
 
-        // Authorized: MCP transport responds (not 401). Body depends on Accept/payload.
         self::assertNotSame(401, $response->getStatusCode());
         self::assertNotSame(404, $response->getStatusCode());
+    }
+
+    public function testPathAuthDisabledReturnsNotFoundForKeySegment(): void
+    {
+        $_ENV['LOCAL_MCP_AUTH_LOCATION'] = 'header';
+        $_SERVER['LOCAL_MCP_AUTH_LOCATION'] = 'header';
+
+        $server = Server::boot(dirname(__DIR__));
+        $response = $server->handle(new ServerRequest('POST', 'http://localhost/mcp/test-key'));
+
+        self::assertSame(404, $response->getStatusCode());
     }
 }

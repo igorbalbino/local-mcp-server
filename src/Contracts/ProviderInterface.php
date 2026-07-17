@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace LocalMcp\Contracts;
 
-interface ServiceClientInterface
+interface ProviderInterface
 {
     public function isConfigured(): bool;
 }

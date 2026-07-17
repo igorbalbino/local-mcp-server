@@ -2,22 +2,23 @@
 
 declare(strict_types=1);
 
-namespace LocalMcp\Clients;
+namespace LocalMcp\Providers\Meilisearch;
 
 use LocalMcp\Core\Config;
+use LocalMcp\Providers\AbstractHttpProvider;
 
-final class MeilisearchClient extends AbstractHttpClient
+final class MeilisearchProvider extends AbstractHttpProvider
 {
     private readonly string $defaultIndex;
 
     public function __construct(Config $config, ?\GuzzleHttp\Client $http = null)
     {
         parent::__construct(
-            baseUrl: $config->string('MEILI_URL'),
-            token: $config->get('MEILI_KEY'),
+            baseUrl: $config->meilisearchUrl(),
+            token: $config->meilisearchKey(),
             http: $http,
         );
-        $this->defaultIndex = $config->string('MEILI_INDEX', 'documents');
+        $this->defaultIndex = $config->meilisearchIndex();
     }
 
     public function getDefaultIndex(): string

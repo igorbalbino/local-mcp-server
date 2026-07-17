@@ -16,10 +16,10 @@ use Psr\Http\Message\ServerRequestInterface;
  * - none: always open (trusted LAN / docker network)
  * - bearer: always require a valid key (fails closed if no keys configured)
  *
- * Accepted credentials (any one):
- * - Authorization: Bearer <key>
- * - Path: /mcp/<key>
- * - Query: ?api_key=<key> or ?token=<key>
+ * Locations (LOCAL_MCP_AUTH_LOCATION, default header,path,query):
+ * - header: Authorization Bearer
+ * - path: /mcp/<key>
+ * - query: ?api_key= / ?token=
  */
 final class RequestAuthenticator
 {
@@ -31,9 +31,7 @@ final class RequestAuthenticator
 
     public function isRequired(): bool
     {
-        $mode = strtolower($this->config->string('LOCAL_MCP_AUTH_MODE', 'auto'));
-
-        return match ($mode) {
+        return match ($this->config->authMode()) {
             'none' => false,
             'bearer' => true,
             default => $this->authenticator->hasKeys(),
@@ -46,20 +44,31 @@ final class RequestAuthenticator
             return true;
         }
 
-        if ($pathToken !== null && $pathToken !== '' && $this->authenticator->isValidKey(rawurldecode($pathToken))) {
+        if (
+            $this->config->allowsAuthLocation('path')
+            && $pathToken !== null
+            && $pathToken !== ''
+            && $this->authenticator->isValidKey(rawurldecode($pathToken))
+        ) {
             return true;
         }
 
-        $query = $request->getQueryParams();
-        foreach (['api_key', 'token'] as $param) {
-            $value = $query[$param] ?? null;
-            if (is_string($value) && $this->authenticator->isValidKey($value)) {
-                return true;
+        if ($this->config->allowsAuthLocation('query')) {
+            $query = $request->getQueryParams();
+            foreach (['api_key', 'token'] as $param) {
+                $value = $query[$param] ?? null;
+                if (is_string($value) && $this->authenticator->isValidKey($value)) {
+                    return true;
+                }
             }
         }
 
-        $header = $request->getHeaderLine('Authorization');
+        if ($this->config->allowsAuthLocation('header')) {
+            $header = $request->getHeaderLine('Authorization');
 
-        return $this->authenticator->authenticate($header !== '' ? $header : null);
+            return $this->authenticator->authenticate($header !== '' ? $header : null);
+        }
+
+        return false;
     }
 }

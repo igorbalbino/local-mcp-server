@@ -14,7 +14,7 @@ final class ApiKeyAuthenticator implements AuthenticatorInterface
 
     public function __construct(Config $config)
     {
-        $this->apiKeys = $config->list('LOCAL_MCP_API_KEYS');
+        $this->apiKeys = $config->mcpApiKeys();
     }
 
     /**

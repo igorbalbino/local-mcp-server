@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools\Searxng;
 
-use LocalMcp\Clients\SearxngClient;
+use LocalMcp\Providers\SearXNG\SearXNGProvider;
 use LocalMcp\Core\Config;
 use LocalMcp\Tools\AbstractTool;
 
 final class WebSearchTool extends AbstractTool
 {
-    public function __construct(Config $config, SearxngClient $client)
+    public function __construct(Config $config, SearXNGProvider $provider)
     {
-        parent::__construct($config, $client, 'ENABLE_SEARXNG');
+        parent::__construct($config, $provider, 'ENABLE_SEARXNG');
     }
 
     public function name(): string
@@ -54,14 +54,14 @@ final class WebSearchTool extends AbstractTool
 
     public function handle(array $arguments): string|array
     {
-        /** @var SearxngClient $client */
-        $client = $this->client;
+        /** @var SearXNGProvider $provider */
+        $provider = $this->provider;
         $query = $this->requireString($arguments, 'query');
         $pageno = $this->optionalInt($arguments, 'pageno', 1) ?? 1;
         $categories = $this->optionalString($arguments, 'categories');
         $language = $this->optionalString($arguments, 'language');
 
-        $raw = $client->search($query, $pageno, $categories, $language);
+        $raw = $provider->search($query, $pageno, $categories, $language);
         $results = [];
 
         if (isset($raw['results']) && is_array($raw['results'])) {

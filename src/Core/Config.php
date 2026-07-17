@@ -87,4 +87,120 @@ final class Config
     {
         return $this->get($key, $default) ?? $default;
     }
+
+    /**
+     * @return list<string>
+     */
+    public function mcpApiKeys(): array
+    {
+        return $this->list('LOCAL_MCP_API_KEYS');
+    }
+
+    public function authMode(): string
+    {
+        return strtolower($this->string('LOCAL_MCP_AUTH_MODE', 'auto'));
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function authLocations(): array
+    {
+        $locations = array_map(
+            static fn (string $item): string => strtolower($item),
+            $this->list('LOCAL_MCP_AUTH_LOCATION'),
+        );
+
+        if ($locations === []) {
+            return ['header', 'path', 'query'];
+        }
+
+        return array_values(array_unique($locations));
+    }
+
+    public function allowsAuthLocation(string $location): bool
+    {
+        return in_array(strtolower($location), $this->authLocations(), true);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function allowedHosts(): array
+    {
+        $hosts = $this->list('LOCAL_MCP_ALLOWED_HOSTS');
+        $defaults = ['localhost', '127.0.0.1', '[::1]', 'local-mcp'];
+
+        return array_values(array_unique([...$defaults, ...$hosts]));
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function corsOrigins(): array
+    {
+        $origins = $this->list('LOCAL_MCP_CORS_ORIGINS');
+
+        return $origins === [] ? ['*'] : $origins;
+    }
+
+    public function mcpServerName(): string
+    {
+        return $this->string('MCP_SERVER_NAME', Version::NAME);
+    }
+
+    public function homeAssistantUrl(): string
+    {
+        return $this->string('HA_URL');
+    }
+
+    public function homeAssistantToken(): ?string
+    {
+        return $this->get('HA_TOKEN');
+    }
+
+    public function searxngUrl(): string
+    {
+        return $this->string('SEARXNG_URL');
+    }
+
+    public function searxngApiKey(): ?string
+    {
+        return $this->get('SEARXNG_API_KEY');
+    }
+
+    public function browserlessUrl(): string
+    {
+        return $this->string('BROWSERLESS_URL');
+    }
+
+    public function browserlessToken(): ?string
+    {
+        return $this->get('BROWSERLESS_TOKEN');
+    }
+
+    public function meilisearchUrl(): string
+    {
+        return $this->string('MEILI_URL');
+    }
+
+    public function meilisearchKey(): ?string
+    {
+        return $this->get('MEILI_KEY');
+    }
+
+    public function meilisearchIndex(): string
+    {
+        return $this->string('MEILI_INDEX', 'documents');
+    }
+
+    public function libreTranslateUrl(): string
+    {
+        return $this->string('LIBRETRANSLATE_URL');
+    }
+
+    public function libreTranslateApiKey(): ?string
+    {
+        return $this->get('LIBRETRANSLATE_API_KEY');
+    }
 }

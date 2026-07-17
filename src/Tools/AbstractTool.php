@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools;
 
-use LocalMcp\Contracts\ServiceClientInterface;
+use LocalMcp\Contracts\ProviderInterface;
 use LocalMcp\Contracts\ToolInterface;
 use LocalMcp\Core\Config;
 use LocalMcp\Exceptions\IntegrationException;
@@ -13,14 +13,14 @@ abstract class AbstractTool implements ToolInterface
 {
     public function __construct(
         protected readonly Config $config,
-        protected readonly ServiceClientInterface $client,
+        protected readonly ProviderInterface $provider,
         protected readonly string $enableFlag,
     ) {
     }
 
     public function isEnabled(): bool
     {
-        return $this->config->bool($this->enableFlag) && $this->client->isConfigured();
+        return $this->config->bool($this->enableFlag) && $this->provider->isConfigured();
     }
 
     /**

@@ -12,7 +12,7 @@ Pasta de conhecimento do projeto (**OKF**): cada assunto tem sua própria pasta 
 | Contratos (interfaces) | [contracts/contracts.md](contracts/contracts.md) |
 | Exceções | [exceptions/exceptions.md](exceptions/exceptions.md) |
 | Server / MCP HTTP | [server/server.md](server/server.md) |
-| Clients HTTP (base) | [clients/clients.md](clients/clients.md) |
+| Providers HTTP | [providers/providers.md](providers/providers.md) |
 | Tools (padrão e registry) | [tools/tools.md](tools/tools.md) |
 | Home Assistant | [home-assistant/home-assistant.md](home-assistant/home-assistant.md) |
 | SearXNG | [searxng/searxng.md](searxng/searxng.md) |
@@ -26,9 +26,10 @@ Pasta de conhecimento do projeto (**OKF**): cada assunto tem sua própria pasta 
 
 ```
 Cliente MCP → public/index.php → Server
-  → Auth (Bearer API Key)
-  → ToolRegistry (tools ENABLE_*)
-  → Tool → Client HTTP → serviço externo
+  → LoggingMiddleware → AuthenticationMiddleware
+  → TransportFactory (Streamable HTTP / GET SSE)
+  → McpServerFacade (mcp/sdk)
+  → Tool → Provider → serviço externo
 ```
 
-Credenciais dos serviços externos **nunca** vão ao modelo de IA; ficam apenas nos clients.
+Credenciais dos serviços externos **nunca** vão ao modelo de IA; ficam apenas nos providers.

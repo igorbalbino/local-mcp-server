@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools\Meilisearch;
 
-use LocalMcp\Clients\MeilisearchClient;
+use LocalMcp\Providers\Meilisearch\MeilisearchProvider;
 use LocalMcp\Core\Config;
 use LocalMcp\Exceptions\IntegrationException;
 use LocalMcp\Tools\AbstractTool;
 
 final class RagIndexDocumentTool extends AbstractTool
 {
-    public function __construct(Config $config, MeilisearchClient $client)
+    public function __construct(Config $config, MeilisearchProvider $provider)
     {
-        parent::__construct($config, $client, 'ENABLE_MEILISEARCH');
+        parent::__construct($config, $provider, 'ENABLE_MEILISEARCH');
     }
 
     public function name(): string
@@ -46,8 +46,8 @@ final class RagIndexDocumentTool extends AbstractTool
 
     public function handle(array $arguments): string|array
     {
-        /** @var MeilisearchClient $client */
-        $client = $this->client;
+        /** @var MeilisearchProvider $provider */
+        $provider = $this->provider;
 
         if (!isset($arguments['document']) || !is_array($arguments['document'])) {
             throw new IntegrationException('Missing or invalid argument: document');
@@ -57,11 +57,11 @@ final class RagIndexDocumentTool extends AbstractTool
         $document = $arguments['document'];
         $index = $this->optionalString($arguments, 'index');
 
-        $result = $client->indexDocument($document, $index);
+        $result = $provider->indexDocument($document, $index);
 
         return $this->json([
             'taskUid' => $result['taskUid'] ?? null,
-            'indexUid' => $result['indexUid'] ?? $index ?? $client->getDefaultIndex(),
+            'indexUid' => $result['indexUid'] ?? $index ?? $provider->getDefaultIndex(),
             'status' => $result['status'] ?? 'enqueued',
         ]);
     }

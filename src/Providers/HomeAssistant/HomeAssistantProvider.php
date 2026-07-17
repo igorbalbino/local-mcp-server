@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace LocalMcp\Clients;
+namespace LocalMcp\Providers\HomeAssistant;
 
 use LocalMcp\Core\Config;
+use LocalMcp\Providers\AbstractHttpProvider;
 
-final class HomeAssistantClient extends AbstractHttpClient
+final class HomeAssistantProvider extends AbstractHttpProvider
 {
     public function __construct(Config $config, ?\GuzzleHttp\Client $http = null)
     {
         parent::__construct(
-            baseUrl: $config->string('HA_URL'),
-            token: $config->get('HA_TOKEN'),
+            baseUrl: $config->homeAssistantUrl(),
+            token: $config->homeAssistantToken(),
             http: $http,
         );
     }
@@ -34,8 +35,10 @@ final class HomeAssistantClient extends AbstractHttpClient
 
         $data = $this->decodeJson($response);
 
-        /** @var list<array<string, mixed>> */
-        return array_is_list($data) ? $data : array_values($data);
+        /** @var list<array<string, mixed>> $states */
+        $states = array_values($data);
+
+        return $states;
     }
 
     /**

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools\Browserless;
 
-use LocalMcp\Clients\BrowserlessClient;
+use LocalMcp\Providers\Browserless\BrowserlessProvider;
 use LocalMcp\Core\Config;
 use LocalMcp\Tools\AbstractTool;
 
 final class BrowserScreenshotTool extends AbstractTool
 {
-    public function __construct(Config $config, BrowserlessClient $client)
+    public function __construct(Config $config, BrowserlessProvider $provider)
     {
-        parent::__construct($config, $client, 'ENABLE_BROWSERLESS');
+        parent::__construct($config, $provider, 'ENABLE_BROWSERLESS');
     }
 
     public function name(): string
@@ -49,13 +49,13 @@ final class BrowserScreenshotTool extends AbstractTool
 
     public function handle(array $arguments): string|array
     {
-        /** @var BrowserlessClient $client */
-        $client = $this->client;
+        /** @var BrowserlessProvider $provider */
+        $provider = $this->provider;
         $url = $this->requireString($arguments, 'url');
         $width = $this->optionalInt($arguments, 'width');
         $height = $this->optionalInt($arguments, 'height');
 
-        $result = $client->screenshot($url, $width, $height);
+        $result = $provider->screenshot($url, $width, $height);
 
         return $this->json($result);
     }

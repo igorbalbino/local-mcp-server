@@ -17,10 +17,10 @@ Home Assistant **≥ 2026.2** talks **Streamable HTTP** to `/mcp` first (the off
 3. Server URL (leave OAuth fields blank):
 
 ```text
-http://local-mcp:8080/mcp/YOUR_API_KEY
+http://local-mcp:8080/mcp/<YOUR_API_KEY>
 ```
 
-Use a hostname/IP that Home Assistant can reach (same Docker network → `http://local-mcp:8080/mcp/...`, or the host IP/port mapped, e.g. `http://192.168.x.x:8090/mcp/...`).
+Use a hostname/IP that Home Assistant can reach (same Docker network → `http://local-mcp:8080/mcp/...`, or the host IP/port mapped). Add that hostname to `LOCAL_MCP_ALLOWED_HOSTS` if it is not already covered (`localhost` and `local-mcp` are included by default).
 
 4. Enable the tools you want in `.env` (`ENABLE_SEARXNG=true`, etc.).
 5. Configure your **conversation agent** to use the MCP tools (adding the integration alone is not enough).
@@ -40,7 +40,7 @@ Quick check that `initialize` returns a session (write JSON **without BOM** — 
 curl.exe -sS -D - -X POST "http://127.0.0.1:8090/mcp" -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" --data-binary "@init.json"
 ```
 
-Expect **200**, header **`Mcp-Session-Id`**, and an `InitializeResult` body.
+Expect **200**, header **`Mcp-Session-Id`**, and an `InitializeResult` body (same JSON-RPC `id` as the request).
 
 Then open the Streamable GET SSE channel (Home Assistant does this after initialize):
 
@@ -58,7 +58,7 @@ Expect **200** `text/event-stream` and a `: connected` comment (not **405**).
     "local-mcp": {
       "url": "http://localhost:8090/mcp",
       "headers": {
-        "Authorization": "Bearer YOUR_API_KEY"
+        "Authorization": "Bearer <YOUR_API_KEY>"
       }
     }
   }
@@ -69,11 +69,12 @@ Expect **200** `text/event-stream` and a `: connected` comment (not **405**).
 
 | Client | How to auth |
 |--------|-------------|
-| Home Assistant | `http://host:8090/mcp/<API_KEY>` |
-| Cursor / Inspector | `Authorization: Bearer <API_KEY>` on `/mcp` |
-| Any HTTP client | `?api_key=<API_KEY>` also works |
+| Home Assistant | `http://host:8090/mcp/<YOUR_API_KEY>` |
+| Cursor / Inspector | `Authorization: Bearer <YOUR_API_KEY>` on `/mcp` |
+| Any HTTP client | `?api_key=<YOUR_API_KEY>` also works when query location is enabled |
 
-`LOCAL_MCP_AUTH_MODE`: `auto` (default) · `none` · `bearer`
+`LOCAL_MCP_AUTH_MODE`: `auto` (default) · `none` · `bearer`  
+`LOCAL_MCP_AUTH_LOCATION`: `header,path,query` (default)
 
 ## Quick start (Docker)
 
@@ -112,6 +113,7 @@ Dev build: `docker compose -f compose.dev.yml up --build -d`
 - Bearer API key for Cursor and other clients
 - Tools: Home Assistant REST, SearXNG, Browserless, Meilisearch (RAG), LibreTranslate
 - Config via `.env`; secrets never returned to the model
+- Layered architecture: Transport · Protocol · Session · Middleware · Providers · Tools
 
 ## Environment variables
 
@@ -119,6 +121,9 @@ Dev build: `docker compose -f compose.dev.yml up --build -d`
 |----------|-------------|
 | `LOCAL_MCP_API_KEYS` | API keys (comma-separated, URL-safe) |
 | `LOCAL_MCP_AUTH_MODE` | `auto` / `none` / `bearer` |
+| `LOCAL_MCP_AUTH_LOCATION` | `header`, `path`, `query` (comma-separated) |
+| `LOCAL_MCP_ALLOWED_HOSTS` | Extra Host/Origin allowlist (Docker DNS rebinding) |
+| `LOCAL_MCP_CORS_ORIGINS` | CORS origins for MCP transport (`*` default) |
 | `MCP_SERVER_NAME` / `MCP_SERVER_VERSION` | Optional identity overrides |
 | `ENABLE_HOME_ASSISTANT` + `HA_URL` + `HA_TOKEN` | HA REST tools (`ha_*`) |
 | `ENABLE_SEARXNG` + `SEARXNG_URL` + … | Web search |
@@ -140,7 +145,7 @@ Dev build: `docker compose -f compose.dev.yml up --build -d`
 
 ## Versioning
 
-[`VERSION`](VERSION) → `/health` returns `{"name":"Local MCP Server","version":"0.1.0","mcp":"/mcp"}`.
+[`VERSION`](VERSION) → `/health` returns `{"status":"ok","name":"Local MCP Server","version":"0.1.0","mcp":"/mcp"}`.
 
 ## Docs
 

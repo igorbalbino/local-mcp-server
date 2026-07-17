@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace LocalMcp\Clients;
+namespace LocalMcp\Providers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use LocalMcp\Contracts\ServiceClientInterface;
+use LocalMcp\Contracts\ProviderInterface;
 use LocalMcp\Exceptions\IntegrationException;
 use Psr\Http\Message\ResponseInterface;
 
-abstract class AbstractHttpClient implements ServiceClientInterface
+abstract class AbstractHttpProvider implements ProviderInterface
 {
     protected readonly Client $http;
 

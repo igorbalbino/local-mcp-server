@@ -8,7 +8,7 @@ Tradução de texto via API LibreTranslate. API key (se existir) é enviada no J
 
 | Assunto | Relação |
 |---------|---------|
-| [clients](../clients/clients.md) | `LibreTranslateClient` |
+| [providers](../providers/providers.md) | `LibreTranslateProvider` |
 | [tools](../tools/tools.md) | `TranslateTool` |
 | [config](../config/config.md) | `ENABLE_LIBRETRANSLATE`, `LIBRETRANSLATE_URL`, `LIBRETRANSLATE_API_KEY` |
 
@@ -24,7 +24,7 @@ Tradução de texto via API LibreTranslate. API key (se existir) é enviada no J
 
 | Arquivo | Classe | Métodos / nome MCP |
 |---------|--------|-------------------|
-| `src/Clients/LibreTranslateClient.php` | `LibreTranslateClient` | `translate(text, source, target)` → `POST translate` |
+| `src/Providers/LibreTranslate/LibreTranslateProvider.php` | `LibreTranslateProvider` | `translate(text, source, target)` → `POST translate` |
 | `src/Tools/LibreTranslate/TranslateTool.php` | `TranslateTool` | `translate` — args: `text`, `target`, `source` (default `auto`) |
 
 Resposta tipada ao agente: `translatedText`, `detectedLanguage`, `source`, `target`.

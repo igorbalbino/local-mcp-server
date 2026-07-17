@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools\HomeAssistant;
 
-use LocalMcp\Clients\HomeAssistantClient;
+use LocalMcp\Providers\HomeAssistant\HomeAssistantProvider;
 use LocalMcp\Core\Config;
 use LocalMcp\Tools\AbstractTool;
 
 final class HaListStatesTool extends AbstractTool
 {
-    public function __construct(Config $config, HomeAssistantClient $client)
+    public function __construct(Config $config, HomeAssistantProvider $provider)
     {
-        parent::__construct($config, $client, 'ENABLE_HOME_ASSISTANT');
+        parent::__construct($config, $provider, 'ENABLE_HOME_ASSISTANT');
     }
 
     public function name(): string
@@ -40,9 +40,9 @@ final class HaListStatesTool extends AbstractTool
 
     public function handle(array $arguments): string|array
     {
-        /** @var HomeAssistantClient $client */
-        $client = $this->client;
-        $states = $client->listStates();
+        /** @var HomeAssistantProvider $provider */
+        $provider = $this->provider;
+        $states = $provider->listStates();
         $domain = $this->optionalString($arguments, 'domain');
 
         if ($domain !== null) {

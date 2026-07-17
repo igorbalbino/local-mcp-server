@@ -8,7 +8,7 @@ Integração com a REST API do Home Assistant: listar estados, consultar entidad
 
 | Assunto | Relação |
 |---------|---------|
-| [clients](../clients/clients.md) | `HomeAssistantClient` |
+| [providers](../providers/providers.md) | `HomeAssistantProvider` |
 | [tools](../tools/tools.md) | Três tools HA |
 | [config](../config/config.md) | `ENABLE_HOME_ASSISTANT`, `HA_URL`, `HA_TOKEN` |
 | [auth](../auth/auth.md) | Auth Local MCP (independente do token HA) |
@@ -25,11 +25,11 @@ Integração com a REST API do Home Assistant: listar estados, consultar entidad
 
 ## Arquivos, classes e funções
 
-### Client
+### Provider
 
 | Arquivo | Classe | Métodos |
 |---------|--------|---------|
-| `src/Clients/HomeAssistantClient.php` | `HomeAssistantClient` | `listStates()`, `getState(entityId)`, `callService(domain, service, serviceData)`, `isConfigured()` |
+| `src/Providers/HomeAssistant/HomeAssistantProvider.php` | `HomeAssistantProvider` | `listStates()`, `getState(entityId)`, `callService(domain, service, serviceData)`, `isConfigured()` |
 
 Endpoints internos: `GET api/states`, `GET api/states/{id}`, `POST api/services/{domain}/{service}` com `Authorization: Bearer`.
 

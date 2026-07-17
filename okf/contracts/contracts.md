@@ -2,27 +2,28 @@
 
 ## Contexto
 
-Contratos que desacoplam camadas (ISP / DIP). Novas tools e clients implementam estas interfaces sem alterar o núcleo além do wiring em `ServiceProvider` e `config/tools.php`.
+Contratos que desacoplam camadas (ISP / DIP). Novas tools e providers implementam estas interfaces sem alterar o núcleo além do wiring em `ServiceProvider` e `config/tools.php`.
 
 ## Relacionamentos
 
 | Assunto | Relação |
 |---------|---------|
 | [tools](../tools/tools.md) | Toda tool implementa `ToolInterface` |
-| [clients](../clients/clients.md) | Clients implementam `ServiceClientInterface` |
+| [providers](../providers/providers.md) | Providers implementam `ProviderInterface` |
 | [auth](../auth/auth.md) | `ApiKeyAuthenticator` implementa `AuthenticatorInterface` |
-| [core](../core/core.md) | Registry e provider dependem só dos contratos |
+| [core](../core/core.md) | Registry e provider DI dependem só dos contratos |
 
-## Arquivos, classes e métodos
+## Arquivos
 
 | Arquivo | Interface | Métodos |
 |---------|-----------|---------|
 | `src/Contracts/ToolInterface.php` | `ToolInterface` | `name()`, `description()`, `inputSchema()`, `isEnabled()`, `handle(array)` |
-| `src/Contracts/ServiceClientInterface.php` | `ServiceClientInterface` | `isConfigured(): bool` |
-| `src/Contracts/AuthenticatorInterface.php` | `AuthenticatorInterface` | `authenticate(?string $authorizationHeader): bool` |
+| `src/Contracts/ProviderInterface.php` | `ProviderInterface` | `isConfigured(): bool` |
+| `src/Contracts/AuthenticatorInterface.php` | `AuthenticatorInterface` | `hasKeys()`, `isValidKey()`, `authenticate(?string)` |
+| `src/Session/SessionStoreInterface.php` | Session store | `exists`, `has`, `read`, `write`, `destroy`, `mcpStore` |
 
 ## Regras
 
-- `inputSchema()` deve ser JSON Schema `type: object` (exigência do `mcp/sdk`)
-- `isEnabled()` combina flag `ENABLE_*` + `client->isConfigured()`
+- `inputSchema()` deve ser JSON Schema `type: object`
+- `isEnabled()` combina flag `ENABLE_*` + `provider->isConfigured()`
 - `handle()` **não** deve retornar tokens, headers ou URLs com secrets

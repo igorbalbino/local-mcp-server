@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace LocalMcp\Tools\HomeAssistant;
 
-use LocalMcp\Clients\HomeAssistantClient;
+use LocalMcp\Providers\HomeAssistant\HomeAssistantProvider;
 use LocalMcp\Core\Config;
 use LocalMcp\Tools\AbstractTool;
 
 final class HaCallServiceTool extends AbstractTool
 {
-    public function __construct(Config $config, HomeAssistantClient $client)
+    public function __construct(Config $config, HomeAssistantProvider $provider)
     {
-        parent::__construct($config, $client, 'ENABLE_HOME_ASSISTANT');
+        parent::__construct($config, $provider, 'ENABLE_HOME_ASSISTANT');
     }
 
     public function name(): string
@@ -49,8 +49,8 @@ final class HaCallServiceTool extends AbstractTool
 
     public function handle(array $arguments): string|array
     {
-        /** @var HomeAssistantClient $client */
-        $client = $this->client;
+        /** @var HomeAssistantProvider $provider */
+        $provider = $this->provider;
         $domain = $this->requireString($arguments, 'domain');
         $service = $this->requireString($arguments, 'service');
 
@@ -61,7 +61,7 @@ final class HaCallServiceTool extends AbstractTool
             $serviceData = $arguments['service_data'];
         }
 
-        $result = $client->callService($domain, $service, $serviceData);
+        $result = $provider->callService($domain, $service, $serviceData);
 
         return $this->json(['result' => $result]);
     }
