@@ -22,17 +22,45 @@ use Psr\Log\LoggerInterface;
 
 final class Server
 {
+    private static ?self $instance = null;
+
+    private static ?string $instanceBasePath = null;
+
     private function __construct(
         private readonly Container $container,
         private readonly string $basePath,
     ) {
     }
 
+    /**
+     * Boot once per worker/process. Reuses the same Container, McpServer and SessionStore
+     * across Streamable HTTP requests (initialize → notifications/initialized → tools/*).
+     */
     public static function boot(string $basePath): self
     {
-        $provider = new ServiceProvider($basePath);
+        $resolved = realpath($basePath) ?: $basePath;
 
-        return new self($provider->register(), $basePath);
+        if (self::$instance !== null && self::$instanceBasePath === $resolved) {
+            return self::$instance;
+        }
+
+        $provider = new ServiceProvider($resolved);
+        $container = $provider->register();
+
+        // Eagerly build the MCP server singleton (tools + session store wired once).
+        $container->get(\LocalMcp\Protocol\McpServerFacade::class);
+
+        self::$instance = new self($container, $resolved);
+        self::$instanceBasePath = $resolved;
+
+        return self::$instance;
+    }
+
+    /** @internal Clears process-local singleton — for tests only. */
+    public static function resetBoot(): void
+    {
+        self::$instance = null;
+        self::$instanceBasePath = null;
     }
 
     public function container(): Container

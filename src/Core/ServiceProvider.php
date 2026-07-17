@@ -53,6 +53,7 @@ final class ServiceProvider
             return $authenticator;
         });
 
+        // Single persistent session store for the process (file-backed; same instance via Container).
         $container->set(SessionStoreInterface::class, fn (): SessionStoreInterface => FileSessionStoreAdapter::forBasePath($this->basePath));
 
         $container->set(HomeAssistantProvider::class, static fn (Container $c): HomeAssistantProvider => new HomeAssistantProvider($c->get(Config::class)));
@@ -72,6 +73,7 @@ final class ServiceProvider
             return new ToolRegistry($tools);
         });
 
+        // Built once: Mcp\Server lives for the worker lifetime; Transport is per-request.
         $container->set(McpServerFacade::class, fn (Container $c): McpServerFacade => new McpServerFacade(
             $c->get(Config::class),
             $c->get(LoggerInterface::class),
@@ -80,6 +82,8 @@ final class ServiceProvider
             $c,
             $this->basePath,
         ));
+
+        $container->set(\Mcp\Server::class, static fn (Container $c): \Mcp\Server => $c->get(McpServerFacade::class)->server());
 
         $container->set(GetSseHandler::class, static fn (Container $c): GetSseHandler => new GetSseHandler(
             $c->get(SessionStoreInterface::class),

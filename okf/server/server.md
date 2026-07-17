@@ -2,9 +2,16 @@
 
 ## Contexto
 
-`LocalMcp\Server` é a facade fina: carrega o DI, roteia `/health`, resolve `/mcp`, aplica middleware de app e delega ao `TransportFactory`.
+`LocalMcp\Server` é a facade fina: **boot singleton por worker**, roteia `/health`, resolve `/mcp`, aplica middleware de app e delega ao `TransportFactory`.
 
-O protocolo MCP (`initialize`, `tools/list`, `tools/call`, eco de `id`, `protocolVersion`) é responsabilidade do `mcp/sdk` via `Protocol\McpServerFacade`.
+Arquitetura Streamable HTTP:
+
+```
+Application (singleton) → McpServer (singleton) → SessionStore (persistente)
+                        → Transport (novo por request)
+```
+
+O protocolo MCP (`initialize`, `tools/list`, `tools/call`, eco de `id`, `protocolVersion`) é responsabilidade do `mcp/sdk` via `Protocol\McpServerFacade`, construído **uma vez** no bootstrap.
 
 ## Relacionamentos
 

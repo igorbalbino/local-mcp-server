@@ -19,36 +19,35 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Adapts the official mcp/sdk server: initialize, tools/list, tools/call, session, protocolVersion.
+ * Holds a single mcp/sdk Server for the process lifetime.
+ * Transport is created per HTTP request; the logical MCP server is not.
  */
 final class McpServerFacade
 {
-    public function __construct(
-        private readonly Config $config,
-        private readonly LoggerInterface $logger,
-        private readonly ToolRegistry $registry,
-        private readonly SessionStoreInterface $sessionStore,
-        private readonly Container $container,
-        private readonly string $basePath,
-    ) {
-    }
+    private readonly McpServer $server;
 
-    public function run(StreamableHttpTransport $transport): ResponseInterface
-    {
-        $version = Version::read($this->basePath);
+    public function __construct(
+        Config $config,
+        private readonly LoggerInterface $logger,
+        ToolRegistry $registry,
+        SessionStoreInterface $sessionStore,
+        Container $container,
+        string $basePath,
+    ) {
+        $version = Version::read($basePath);
 
         $builder = McpServer::builder()
             ->setServerInfo(
-                $this->config->mcpServerName(),
-                $this->config->string('MCP_SERVER_VERSION', $version),
+                $config->mcpServerName(),
+                $config->string('MCP_SERVER_VERSION', $version),
                 'Local MCP Server — modular tools for AI agents',
             )
-            ->setSession($this->sessionStore->mcpStore())
-            ->setLogger($this->logger)
-            ->setContainer($this->container)
+            ->setSession($sessionStore->mcpStore())
+            ->setLogger($logger)
+            ->setContainer($container)
             ->setInstructions('Use the available tools to interact with external services. Credentials are handled by the server.');
 
-        foreach ($this->registry->all() as $tool) {
+        foreach ($registry->all() as $tool) {
             $builder->addTool(
                 handler: $this->createHandler($tool),
                 name: $tool->name(),
@@ -57,7 +56,23 @@ final class McpServerFacade
             );
         }
 
-        return $builder->build()->run($transport);
+        $this->server = $builder->build();
+    }
+
+    public function server(): McpServer
+    {
+        return $this->server;
+    }
+
+    public function run(StreamableHttpTransport $transport): ResponseInterface
+    {
+        $result = $this->server->run($transport);
+
+        if (!$result instanceof ResponseInterface) {
+            throw new \RuntimeException('Expected PSR-7 ResponseInterface from StreamableHttpTransport');
+        }
+
+        return $result;
     }
 
     private function createHandler(ToolInterface $tool): \Closure

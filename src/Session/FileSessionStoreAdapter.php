@@ -60,6 +60,10 @@ final class FileSessionStoreAdapter implements SessionStoreInterface, McpSession
         return $this->inner->gc();
     }
 
+    /**
+     * Returns this same persistent adapter (implements the SDK SessionStoreInterface).
+     * Do not wrap in a new FileSessionStore per call — session files must stay shared.
+     */
     public function mcpStore(): McpSessionStoreInterface
     {
         return $this;

@@ -12,6 +12,8 @@ final class ServerRoutingTest extends TestCase
 {
     protected function setUp(): void
     {
+        Server::resetBoot();
+
         $_ENV['LOCAL_MCP_API_KEYS'] = 'test-key';
         $_SERVER['LOCAL_MCP_API_KEYS'] = 'test-key';
         $_ENV['LOCAL_MCP_AUTH_MODE'] = 'auto';
@@ -20,6 +22,11 @@ final class ServerRoutingTest extends TestCase
         $_SERVER['LOCAL_MCP_AUTH_LOCATION'] = 'header,path,query';
         $_ENV['LOCAL_MCP_ALLOWED_HOSTS'] = 'localhost,127.0.0.1';
         $_SERVER['LOCAL_MCP_ALLOWED_HOSTS'] = 'localhost,127.0.0.1';
+    }
+
+    protected function tearDown(): void
+    {
+        Server::resetBoot();
     }
 
     public function testHealthIsPublic(): void
@@ -60,6 +67,8 @@ final class ServerRoutingTest extends TestCase
 
     public function testPathAuthDisabledReturnsNotFoundForKeySegment(): void
     {
+        Server::resetBoot();
+
         $_ENV['LOCAL_MCP_AUTH_LOCATION'] = 'header';
         $_SERVER['LOCAL_MCP_AUTH_LOCATION'] = 'header';
 
